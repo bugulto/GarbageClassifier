@@ -1,15 +1,15 @@
 import cv2
 import numpy as np
 
-from ingestion.preprocessing import letterbox, ROI_cropping
+from preprocessing.common import letterbox, roi_cropping
 
-def sampling(cap):
+def sampling(cap, config):
      
-    TARGET_INFERENCE_FPS = 6 # Number of frames we actually want to process per second
+    TARGET_INFERENCE_FPS = config["sampling"]["target_fps"] # Number of frames we actually want to process per second
     SOURCE_FPS = cap.get(cv2.CAP_PROP_FPS) # Get the original FPS of the video
     frame_interval = int(SOURCE_FPS / TARGET_INFERENCE_FPS)
 
-    Input_size = (640,640)
+    Input_size = config["preprocessing"]["input_size"]
 
     frame_count = 0
 
@@ -24,7 +24,7 @@ def sampling(cap):
         if frame_count % frame_interval != 0:
             continue
 
-        xmin, xmax, ymin, ymax = ROI_cropping(frame)
+        xmin, xmax, ymin, ymax = roi_cropping(frame, config["preprocessing"]["roi"])
         cropped_frame = frame[ymin:ymax, xmin:xmax]
 
         letterboxed_frame = letterbox(cropped_frame, resized_shape=Input_size)

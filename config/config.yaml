@@ -1,0 +1,31 @@
+pipeline:
+  model: FRCNN_gc
+
+video:
+  # Use a relative file path for a video, or use 0 for the default webcam.
+  source: test/test_video.mp4
+
+sampling:
+  target_fps: 6
+
+preprocessing:
+  input_size: [640, 640]
+  roi:
+    xmin: 0.3
+    xmax: 0.7
+    ymin: 0.3
+    ymax: 0.7
+
+models:
+  yolo_gc:
+    adapter: yolo
+    preprocessor: yolo
+    weights: models/weights/YoloGC.pt
+    tracker: tracker/bytetrack.yaml
+    input_size: [640, 640]
+  
+  FRCNN_gc:
+    adapter: fasterrcnn
+    preprocessor: fasterrcnn
+    weights: models/weights/FasterRCNN_GC.pth
+    input_size: [640, 640]

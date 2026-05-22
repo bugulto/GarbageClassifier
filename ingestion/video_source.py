@@ -1,7 +1,8 @@
 import cv2
 import os
 
-def video_source():
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    cap = cv2.VideoCapture(os.path.join(script_dir,'test/test_video.mp4'))
-    return cap
+def video_source(video_config, project_root):
+    source = video_config["source"]
+    video_path = os.path.join(project_root, source)
+    #video_path = project_root / source
+    return cv2.VideoCapture(str(video_path))
