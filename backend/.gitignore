@@ -1,0 +1,32 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+mgcenv/
+venv/
+env/
+.env
+
+# Django
+*.log
+db.sqlite3
+local_settings.py
+
+# Ignore uploaded media files (keep the uploads app code)
+/media/
+media/
+
+# Static build outputs
+/static/
+staticfiles/
+
+# Node modules (if frontend present)
+node_modules/
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+
+# NOTE: Do NOT ignore the backend/uploads app directory — commit it if you added the app.
