@@ -1,9 +1,13 @@
 import os
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
+
 from django.conf import settings
 from django.core.files.storage import default_storage
+
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from preprocessing.video_processor import extract_snapshots_from_video
 
 
 class UploadView(APIView):
@@ -50,16 +54,56 @@ class UploadView(APIView):
             "file_url": file_url,
         }
 
-        if input_type == "video":
-            response_data.update({
+        if input_type == "image":
+            return Response(response_data, status=status.HTTP_201_CREATED)
+
+        if not interval_seconds:
+            return Response(
+                {"error": "interval_seconds is required for video."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if (
+            crop_x is None
+            or crop_y is None
+            or crop_width is None
+            or crop_height is None
+        ):
+            return Response(
+                {"error": "Crop coordinates are required for video."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            interval_seconds = float(interval_seconds)
+
+            crop = {
+                "x": int(float(crop_x)),
+                "y": int(float(crop_y)),
+                "width": int(float(crop_width)),
+                "height": int(float(crop_height)),
+            }
+
+            video_full_path = os.path.join(settings.MEDIA_ROOT, saved_path)
+
+            snapshots = extract_snapshots_from_video(
+                video_path=video_full_path,
+                interval_seconds=interval_seconds,
+                crop=crop,
+            )
+
+        except Exception as error:
+            return Response(
+                {"error": str(error)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        response_data.update(
+            {
                 "interval_seconds": interval_seconds,
-                "crop": {
-                    "x": crop_x,
-                    "y": crop_y,
-                    "width": crop_width,
-                    "height": crop_height,
-                },
-            })
+                "crop": crop,
+                "snapshots": snapshots,
+            }
+        )
 
         return Response(response_data, status=status.HTTP_201_CREATED)
-
