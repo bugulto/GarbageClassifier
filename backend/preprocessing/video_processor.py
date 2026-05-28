@@ -1,5 +1,7 @@
 import os
+
 import cv2
+
 from django.conf import settings
 
 from .cropper import crop_frame
@@ -9,7 +11,7 @@ def extract_snapshots_from_video(
     video_path,
     interval_seconds,
     crop,
-    output_folder="snapshots",
+    job_id,
 ):
 
     interval_seconds = float(interval_seconds)
@@ -24,14 +26,18 @@ def extract_snapshots_from_video(
 
     fps = cap.get(cv2.CAP_PROP_FPS)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    video_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    video_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     if fps <= 0:
         cap.release()
         raise ValueError("Could not read video FPS.")
 
+    duration_seconds = total_frames / fps if fps else 0
     frame_interval = max(1, int(fps * interval_seconds))
 
-    snapshot_dir = os.path.join(settings.MEDIA_ROOT, output_folder)
+    snapshot_rel_dir = f"snapshots/{job_id}"
+    snapshot_dir = os.path.join(settings.MEDIA_ROOT, snapshot_rel_dir)
     os.makedirs(snapshot_dir, exist_ok=True)
 
     saved_snapshots = []
@@ -48,16 +54,18 @@ def extract_snapshots_from_video(
 
         cropped_frame = crop_frame(frame, crop)
 
-        snapshot_filename = f"snapshot_{snapshot_index}_frame_{frame_index}.jpg"
+        timestamp_seconds = round(frame_index / fps, 2)
+        snapshot_filename = f"frame_{frame_index:06d}_t{timestamp_seconds:.2f}.jpg"
         snapshot_path = os.path.join(snapshot_dir, snapshot_filename)
 
         cv2.imwrite(snapshot_path, cropped_frame)
 
-        relative_path = os.path.join(output_folder, snapshot_filename)
+        relative_path = f"{snapshot_rel_dir}/{snapshot_filename}"
         saved_snapshots.append({
-            "snapshot_path": relative_path,
+            "snapshot_index": snapshot_index,
             "frame_index": frame_index,
-            "timestamp_seconds": round(frame_index / fps, 2),
+            "timestamp_seconds": timestamp_seconds,
+            "snapshot_path": relative_path,
         })
 
         snapshot_index += 1
@@ -65,4 +73,12 @@ def extract_snapshots_from_video(
 
     cap.release()
 
-    return saved_snapshots
+    return {
+        "fps": fps,
+        "total_frames": total_frames,
+        "duration_seconds": round(duration_seconds, 2),
+        "video_width": video_width,
+        "video_height": video_height,
+        "frame_interval": frame_interval,
+        "snapshots": saved_snapshots,
+    }
