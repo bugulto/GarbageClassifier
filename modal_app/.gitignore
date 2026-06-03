@@ -1,1 +1,4 @@
 gc_models
+modalenv
+modal_app/__pycache__/
+modal_app/inference/__pycache__/
