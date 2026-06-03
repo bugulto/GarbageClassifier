@@ -1,0 +1,6 @@
+modal
+torch
+torchvision
+pillow
+numpy
+fastapi[standard]
