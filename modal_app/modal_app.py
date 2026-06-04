@@ -2,6 +2,7 @@ import base64
 
 import modal
 
+
 MODEL_VOLUME_NAME = "gc-models"
 MODEL_MOUNT_PATH = "/models"
 
@@ -9,6 +10,10 @@ model_volume = modal.Volume.from_name(MODEL_VOLUME_NAME, create_if_missing=True)
 
 image = (
     modal.Image.debian_slim(python_version="3.11")
+    .apt_install(
+    "libglib2.0-0",
+    "libgl1",
+    )
     .pip_install_from_requirements("requirements.txt")
     .add_local_dir("inference", remote_path="/root/inference")
     .add_local_dir("config", remote_path="/root/config")
@@ -39,8 +44,10 @@ class GarbageClassifier:
         if not job_id:
             raise ValueError("job_id is required.")
 
-        if not model_type:
-            raise ValueError("model_type is required.")
+        if model_type not in ["ssd", "yolo", "faster_rcnn"]:
+            raise ValueError(
+                "model_type must be one of: ssd, yolo, faster_rcnn."
+            )
 
         if not images:
             raise ValueError("images list is required.")

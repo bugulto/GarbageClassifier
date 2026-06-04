@@ -1,12 +1,13 @@
 import base64
+import argparse
 import json
-import mimetypes
 from pathlib import Path
 
 import requests
 
 
-MODAL_ENDPOINT_URL = "https://lamichhaneprabal--gc-inference-infer-dev.modal.run/"
+MODAL_ENDPOINT_URL = "https://lamichhaneprabal--gc-inference-infer.modal.run"
+MODEL_TYPES = [ "yolo", "faster_rcnn", "ssd" ]
 
 
 def encode_image_to_base64(image_path):
@@ -19,7 +20,7 @@ def encode_image_to_base64(image_path):
         return base64.b64encode(image_file.read()).decode("utf-8")
 
 
-def test_modal_endpoint(image_path, model_type="ssd"):
+def test_modal_endpoint(image_path, model_type):
     image_base64 = encode_image_to_base64(image_path)
 
     payload = {
@@ -52,9 +53,24 @@ def test_modal_endpoint(image_path, model_type="ssd"):
 
 
 if __name__ == "__main__":
-    test_image_path = "/home/alaxini/projects/garb_class/GARBAGE CLASSIFICATION/test/images/metal29_jpg.rf.5cadc019ff77d286f7a7b0e9affd13df.jpg"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--image-path", default="/home/alaxini/projects/GarbageClassifier/test/metal32_jpg.rf.ec6b4bac450c6e7b73b32ece688c49dc.jpg")
+    parser.add_argument("--model-type", choices=MODEL_TYPES)
+    parser.add_argument("--all-models", action="store_true")
+    args = parser.parse_args()
 
-    test_modal_endpoint(
-        image_path=test_image_path,
-        model_type="ssd",
-    )
+    if args.all_models:
+        for model_type in MODEL_TYPES:
+            print(f"\nTesting model_type={model_type}")
+            test_modal_endpoint(
+                image_path=args.image_path,
+                model_type=model_type,
+            )
+    else:
+        if not args.model_type:
+            raise SystemExit("Use --model-type or --all-models.")
+
+        test_modal_endpoint(
+            image_path=args.image_path,
+            model_type=args.model_type,
+        )
