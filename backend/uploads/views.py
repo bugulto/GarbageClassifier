@@ -8,6 +8,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from inference.modal_client import ModalInferenceError
+from inference.services import run_image_inference, run_video_inference
 from preprocessing.video_processor import extract_snapshots_from_video
 
 
@@ -45,6 +47,8 @@ class UploadView(APIView):
         _, file_extension = os.path.splitext(uploaded_file.name)
         file_extension = file_extension or ""
 
+        crop = None
+
         if input_type == "video":
             if not interval_seconds:
                 return Response(
@@ -65,6 +69,7 @@ class UploadView(APIView):
 
             try:
                 interval_seconds = float(interval_seconds)
+
                 crop = {
                     "x": int(float(crop_x)),
                     "y": int(float(crop_y)),
@@ -80,8 +85,14 @@ class UploadView(APIView):
         folder = "images" if input_type == "image" else "videos"
         file_path = f"{folder}/{job_id}/original{file_extension}"
 
-        saved_path = default_storage.save(file_path, uploaded_file)
-        file_url = request.build_absolute_uri(default_storage.url(saved_path))
+        try:
+            saved_path = default_storage.save(file_path, uploaded_file)
+            file_url = request.build_absolute_uri(default_storage.url(saved_path))
+        except Exception as error:
+            return Response(
+                {"error": f"Failed to save uploaded file: {str(error)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
         response_data = {
             "message": "File uploaded successfully.",
@@ -93,6 +104,28 @@ class UploadView(APIView):
         }
 
         if input_type == "image":
+            try:
+                inference_result = run_image_inference(
+                    job_id=job_id,
+                    model_type=model_type,
+                    image_path=saved_path,
+                )
+            except (ModalInferenceError, FileNotFoundError) as error:
+                return Response(
+                    {
+                        **response_data,
+                        "error": str(error),
+                    },
+                    status=status.HTTP_502_BAD_GATEWAY,
+                )
+
+            response_data.update(
+                {
+                    "message": "Image uploaded and inference completed.",
+                    "inference_results": inference_result,
+                }
+            )
+
             return Response(response_data, status=status.HTTP_201_CREATED)
 
         try:
@@ -107,22 +140,56 @@ class UploadView(APIView):
 
         except Exception as error:
             return Response(
-                {"error": str(error)},
+                {
+                    **response_data,
+                    "error": f"Video preprocessing failed: {str(error)}",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         snapshots = []
+
         for snapshot in video_result["snapshots"]:
             snapshot_url = request.build_absolute_uri(
                 default_storage.url(snapshot["snapshot_path"])
             )
-            snapshots.append({
-                **snapshot,
-                "snapshot_url": snapshot_url,
-            })
+
+            snapshots.append(
+                {
+                    **snapshot,
+                    "snapshot_url": snapshot_url,
+                }
+            )
+
+        try:
+            inference_result = run_video_inference(
+                job_id=job_id,
+                model_type=model_type,
+                snapshots=snapshots,
+            )
+        except (ModalInferenceError, FileNotFoundError) as error:
+            return Response(
+                {
+                    **response_data,
+                    "interval_seconds": interval_seconds,
+                    "crop": crop,
+                    "video_metadata": {
+                        "fps": video_result["fps"],
+                        "total_frames": video_result["total_frames"],
+                        "duration_seconds": video_result["duration_seconds"],
+                        "video_width": video_result["video_width"],
+                        "video_height": video_result["video_height"],
+                        "frame_interval": video_result["frame_interval"],
+                    },
+                    "snapshots": snapshots,
+                    "error": str(error),
+                },
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
 
         response_data.update(
             {
+                "message": "Video uploaded, preprocessed, and inference completed.",
                 "interval_seconds": interval_seconds,
                 "crop": crop,
                 "video_metadata": {
@@ -134,6 +201,7 @@ class UploadView(APIView):
                     "frame_interval": video_result["frame_interval"],
                 },
                 "snapshots": snapshots,
+                "inference_results": inference_result,
             }
         )
 

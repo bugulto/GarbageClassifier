@@ -14,6 +14,10 @@ import os
 
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,6 +41,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "uploads",
     "preprocessing",
+    "inference",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -129,3 +134,6 @@ CORS_ALLOWED_ORIGINS = [
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+MODAL_INFERENCE_URL = os.getenv("MODAL_INFERENCE_URL")
+MODAL_INFERENCE_TIMEOUT = int(os.getenv("MODAL_INFERENCE_TIMEOUT", 300))
