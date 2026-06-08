@@ -104,18 +104,20 @@ def generate_job_id():
 
 
 def save_uploaded_file(uploaded_file, input_type, job_id):
+    original_filename = uploaded_file.name
 
-    _, file_extension = os.path.splitext(uploaded_file.name)
+    _, file_extension = os.path.splitext(original_filename)
     file_extension = file_extension or ""
 
     folder = "images" if input_type == "image" else "videos"
     file_path = f"{folder}/{job_id}/original{file_extension}"
 
     saved_path = default_storage.save(file_path, uploaded_file)
-    return saved_path
+
+    return saved_path, original_filename
 
 
-def build_base_response(request, job_id, input_type, model_type, saved_path):
+def build_base_response(request, job_id, input_type, model_type, saved_path, original_filename):
 
     file_url = request.build_absolute_uri(default_storage.url(saved_path))
 
@@ -126,6 +128,7 @@ def build_base_response(request, job_id, input_type, model_type, saved_path):
         "model_type": model_type,
         "file_path": saved_path,
         "file_url": file_url,
+        "original_filename": original_filename,
     }
 
 

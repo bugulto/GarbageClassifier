@@ -30,7 +30,7 @@ class UploadView(APIView):
 
         job_id = generate_job_id()
         try:
-            saved_path = save_uploaded_file(
+            saved_path, original_filename = save_uploaded_file(
                 uploaded_file=params["uploaded_file"],
                 input_type=params["input_type"],
                 job_id=job_id,
@@ -46,6 +46,7 @@ class UploadView(APIView):
             input_type=params["input_type"],
             model_type=params["model_type"],
             saved_path=saved_path,
+            original_filename=original_filename,
         )
         if params["input_type"] == "image":
             return self._handle_image(request, params, response_data, job_id, saved_path)
