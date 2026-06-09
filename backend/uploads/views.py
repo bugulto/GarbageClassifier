@@ -1,3 +1,4 @@
+import logging
 import os
 
 from django.conf import settings
@@ -9,15 +10,19 @@ from rest_framework.views import APIView
 from inference.modal_client import ModalInferenceError
 from inference.services import run_image_inference, run_video_inference
 from preprocessing.video_processor import extract_snapshots_from_video
+from results.services import save_results_and_build_response
+from results.cleanup import cleanup_temporary_files
 
 from .services import (
     validate_upload_request,
     generate_job_id,
     save_uploaded_file,
-    build_base_response,
     build_snapshot_urls,
     build_video_metadata,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 class UploadView(APIView):
@@ -29,6 +34,7 @@ class UploadView(APIView):
             return error_response
 
         job_id = generate_job_id()
+
         try:
             saved_path, original_filename = save_uploaded_file(
                 uploaded_file=params["uploaded_file"],
@@ -40,20 +46,13 @@ class UploadView(APIView):
                 {"error": f"Failed to save uploaded file: {str(error)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        response_data = build_base_response(
-            request=request,
-            job_id=job_id,
-            input_type=params["input_type"],
-            model_type=params["model_type"],
-            saved_path=saved_path,
-            original_filename=original_filename,
-        )
+
         if params["input_type"] == "image":
-            return self._handle_image(request, params, response_data, job_id, saved_path)
+            return self._handle_image(request, params, job_id, saved_path, original_filename)
 
-        return self._handle_video(request, params, response_data, job_id, saved_path)
+        return self._handle_video(request, params, job_id, saved_path, original_filename)
 
-    def _handle_image(self, request, params, response_data, job_id, saved_path):
+    def _handle_image(self, request, params, job_id, saved_path, original_filename):
 
         try:
             inference_result = run_image_inference(
@@ -63,21 +62,37 @@ class UploadView(APIView):
             )
         except (ModalInferenceError, FileNotFoundError) as error:
             return Response(
-                {
-                    **response_data,
-                    "error": str(error),
-                },
+                {"error": str(error)},
                 status=status.HTTP_502_BAD_GATEWAY,
             )
 
-        response_data.update({
-            "message": "Image uploaded and inference completed.",
-            "inference_results": inference_result,
-        })
+        try:
+            final_data = save_results_and_build_response(
+                request=request,
+                job_id=job_id,
+                input_type="image",
+                model_type=params["model_type"],
+                original_filename=original_filename,
+                inference_results=inference_result,
+            )
+        except Exception as error:
+            return Response(
+                {"error": f"Failed to save results: {str(error)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        try:
+            cleanup_temporary_files(
+                input_type="image",
+                saved_path=saved_path,
+                job_id=job_id,
+            )
+        except Exception:
+            logger.warning("Cleanup failed for image job %s", job_id, exc_info=True)
 
-    def _handle_video(self, request, params, response_data, job_id, saved_path):
+        return Response(final_data, status=status.HTTP_201_CREATED)
+
+    def _handle_video(self, request, params, job_id, saved_path, original_filename):
         interval_seconds = params["interval_seconds"]
         crop = params["crop"]
 
@@ -92,10 +107,7 @@ class UploadView(APIView):
             )
         except Exception as error:
             return Response(
-                {
-                    **response_data,
-                    "error": f"Video preprocessing failed: {str(error)}",
-                },
+                {"error": f"Video preprocessing failed: {str(error)}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -110,24 +122,36 @@ class UploadView(APIView):
             )
         except (ModalInferenceError, FileNotFoundError) as error:
             return Response(
-                {
-                    **response_data,
-                    "interval_seconds": interval_seconds,
-                    "crop": crop,
-                    "video_metadata": video_metadata,
-                    "snapshots": snapshots,
-                    "error": str(error),
-                },
+                {"error": str(error)},
                 status=status.HTTP_502_BAD_GATEWAY,
             )
 
-        response_data.update({
-            "message": "Video uploaded, preprocessed, and inference completed.",
-            "interval_seconds": interval_seconds,
-            "crop": crop,
-            "video_metadata": video_metadata,
-            "snapshots": snapshots,
-            "inference_results": inference_result,
-        })
+        try:
+            final_data = save_results_and_build_response(
+                request=request,
+                job_id=job_id,
+                input_type="video",
+                model_type=params["model_type"],
+                original_filename=original_filename,
+                inference_results=inference_result,
+                snapshots=snapshots,
+                video_metadata=video_metadata,
+                crop=crop,
+                interval_seconds=interval_seconds,
+            )
+        except Exception as error:
+            return Response(
+                {"error": f"Failed to save results: {str(error)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        try:
+            cleanup_temporary_files(
+                input_type="video",
+                saved_path=saved_path,
+                job_id=job_id,
+            )
+        except Exception:
+            logger.warning("Cleanup failed for video job %s", job_id, exc_info=True)
+
+        return Response(final_data, status=status.HTTP_201_CREATED)

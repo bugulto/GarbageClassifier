@@ -61,7 +61,7 @@ def _validate_video_params(request):
     crop_width = request.data.get("crop_width")
     crop_height = request.data.get("crop_height")
 
-    if not interval_seconds:
+    if interval_seconds is None:
         return None, Response(
             {"error": "interval_seconds is required for video."},
             status=status.HTTP_400_BAD_REQUEST,
@@ -115,21 +115,6 @@ def save_uploaded_file(uploaded_file, input_type, job_id):
     saved_path = default_storage.save(file_path, uploaded_file)
 
     return saved_path, original_filename
-
-
-def build_base_response(request, job_id, input_type, model_type, saved_path, original_filename):
-
-    file_url = request.build_absolute_uri(default_storage.url(saved_path))
-
-    return {
-        "message": "File uploaded successfully.",
-        "job_id": job_id,
-        "input_type": input_type,
-        "model_type": model_type,
-        "file_path": saved_path,
-        "file_url": file_url,
-        "original_filename": original_filename,
-    }
 
 
 def build_snapshot_urls(request, raw_snapshots):
