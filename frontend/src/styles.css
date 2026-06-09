@@ -353,3 +353,21 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.history-filters {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.history-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-filters select {
+  padding: 6px;
+}
