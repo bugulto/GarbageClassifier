@@ -10,6 +10,7 @@ export const uploadImage = async (file, modelType) => {
 
   try {
     const response = await axios.post(`${API_BASE_URL}/upload/`, formData)
+    console.log('Upload response:', response.data) // temporary log to check response data
     return response.data
   } catch (error) {
     throw error.response?.data || error.message
@@ -37,6 +38,7 @@ export const uploadVideo = async (
 
   try {
     const response = await axios.post(`${API_BASE_URL}/upload/`, formData)
+    console.log('Upload response:', response.data) // temporary log to check response data
     return response.data
   } catch (error) {
     throw error.response?.data || error.message
