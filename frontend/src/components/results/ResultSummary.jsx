@@ -6,7 +6,7 @@ export const ResultSummary = ({ result }) => {
         <tbody>
           <tr>
             <td><strong>Status</strong></td>
-            <td>{result.message}</td>
+            <td>{result.message || result.status || 'Unknown'}</td>
           </tr>
           <tr>
             <td><strong>Job ID</strong></td>

@@ -5,6 +5,7 @@ export const FileInput = ({ inputType, onFileChange, disabled }) => {
     <div className="form-group">
       <label>Upload {inputType}:</label>
       <input
+        key={inputType}
         type="file"
         accept={accept}
         onChange={onFileChange}

@@ -1,24 +1,20 @@
-// TODO: Replace with real API call when backend chat endpoint is implemented.
-// Expected real endpoint:
-//   POST /api/chat/
-//   Payload: { question, job_id }
+import axios from 'axios'
 
-/**
- * Send a question to the chatbot.
- * @param {string} question - The user's question.
- * @param {string|null} jobId - Optional job_id for job-specific context.
- * @returns {Promise<{role: string, content: string}>}
- */
+const API_BASE_URL = 'http://127.0.0.1:8000/api'
+
 export const askQuestion = async (question, jobId = null) => {
-  // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 500))
-
-  let content
-  if (jobId) {
-    content = `Placeholder answer for job ${jobId}. RAG backend will be connected later.`
-  } else {
-    content = 'Placeholder global chatbot answer. RAG backend will be connected later.'
+  const payload = {
+    question,
   }
 
-  return { role: 'assistant', content }
+  if (jobId) {
+    payload.job_id = jobId
+  }
+
+  const response = await axios.post(`${API_BASE_URL}/chat/`, payload)
+
+  return {
+    role: 'assistant',
+    content: response.data.answer,
+  }
 }

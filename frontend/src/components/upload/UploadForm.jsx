@@ -117,7 +117,7 @@ export const UploadForm = ({ onUploadSuccess, setLoading, setError }) => {
       const errorMsg =
         typeof error === 'string'
           ? error
-          : error?.detail || error?.message || JSON.stringify(error)
+          : error?.error || error?.detail || error?.message || JSON.stringify(error)
       setError(`Upload failed: ${errorMsg}`)
     } finally {
       setSubmitting(false)
