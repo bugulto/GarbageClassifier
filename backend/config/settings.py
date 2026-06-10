@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     "uploads",
     "preprocessing",
     "inference",
-    "results", 
+    "results",
+    "chatbot",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -143,3 +144,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 MODAL_INFERENCE_URL = os.getenv("MODAL_INFERENCE_URL")
 MODAL_INFERENCE_TIMEOUT = int(os.getenv("MODAL_INFERENCE_TIMEOUT", 300))
+
+OLLAMA_CHAT_MODEL = os.getenv("OLLAMA_CHAT_MODEL", "llama3")
+OLLAMA_TEMPERATURE = float(os.getenv("OLLAMA_TEMPERATURE", 0))
