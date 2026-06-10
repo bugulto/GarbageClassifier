@@ -232,6 +232,7 @@ def _build_final_response(job_id, input_type, model_type, original_filename,
 
     return {
         "message": message,
+        "status": "completed",
         "job_id": job_id,
         "input_type": input_type,
         "model_type": model_type,
