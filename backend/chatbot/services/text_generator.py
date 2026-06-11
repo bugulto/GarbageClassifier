@@ -13,17 +13,27 @@ def generate_text(filename, predictions, job=None):
     model_type = "unknown model"
     total_detections = sum(predictions.values())
     total_result_images = None
+    detected_at = None
 
     if job:
         input_type = job.input_type
         model_type = job.model_type
         total_detections = job.total_detections
         total_result_images = job.total_result_images
+        detected_at = job.created_at
+
+    if detected_at:
+        detected_text = f"Detected at {detected_at}. "
+    else:
+        detected_text = (
+            f"Detected on {date.today()} at "
+            f"{datetime.now().time().replace(microsecond=0)}. "
+        )
 
     parts = [
         (
             f"{input_type.title()} file {filename} was processed for garbage classification. "
-            f"Detected on {date.today()} at {datetime.now().time().replace(microsecond=0)}. "
+            f"{detected_text}"
             f"The model used was {model_type}. "
             f"The job contains {total_detections} total detected garbage item(s)."
         )
