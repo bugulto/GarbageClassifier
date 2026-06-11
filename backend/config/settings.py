@@ -147,3 +147,10 @@ MODAL_INFERENCE_TIMEOUT = int(os.getenv("MODAL_INFERENCE_TIMEOUT", 300))
 
 OLLAMA_CHAT_MODEL = os.getenv("OLLAMA_CHAT_MODEL", "llama3")
 OLLAMA_TEMPERATURE = float(os.getenv("OLLAMA_TEMPERATURE", 0))
+
+OLLAMA_EMBEDDING_MODEL = os.getenv(
+    "OLLAMA_EMBEDDING_MODEL",
+    "embeddinggemma:latest",
+)
+
+RAG_TOP_K = int(os.getenv("RAG_TOP_K", 3))

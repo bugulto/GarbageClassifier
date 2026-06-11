@@ -149,6 +149,8 @@ def save_results_and_build_response(
         job.total_result_images = total_result_images
         job.save(update_fields=["total_detections", "total_result_images"])
 
+    _create_rag_document_safely(job)       
+
     return _build_final_response(
         job_id=job_id,
         input_type=input_type,
@@ -242,3 +244,13 @@ def _build_final_response(job_id, input_type, model_type, original_filename,
         "total_result_images": total_result_images,
         "result_images": result_images_data,
     }
+
+def _create_rag_document_safely(job):
+    try:
+        from chatbot.services.ingestion_service import RAGIngestionService
+
+        RAGIngestionService().create_or_update_for_job(job)
+    except Exception as error:
+        logger.error(f"RAG document creation failed for job {job.job_id}: {error}")
+
+
