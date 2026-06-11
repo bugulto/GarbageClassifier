@@ -458,7 +458,7 @@ button:disabled {
   color: var(--ink-mid);
 }
 
-/* History Filters */
+/*History Filters*/
 .history-filters {
   display: flex;
   gap: 16px;
