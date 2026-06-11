@@ -1,6 +1,5 @@
 import axios from 'axios'
-
-const API_BASE_URL = 'http://127.0.0.1:8000/api'
+import { API_BASE_URL } from './apiConfig'
 
 export const uploadImage = async (file, modelType) => {
   const formData = new FormData()
@@ -10,7 +9,6 @@ export const uploadImage = async (file, modelType) => {
 
   try {
     const response = await axios.post(`${API_BASE_URL}/upload/`, formData)
-    console.log('Upload response:', response.data) // temporary log to check response data
     return response.data
   } catch (error) {
     throw error.response?.data || error.message
@@ -38,7 +36,6 @@ export const uploadVideo = async (
 
   try {
     const response = await axios.post(`${API_BASE_URL}/upload/`, formData)
-    console.log('Upload response:', response.data) // temporary log to check response data
     return response.data
   } catch (error) {
     throw error.response?.data || error.message
