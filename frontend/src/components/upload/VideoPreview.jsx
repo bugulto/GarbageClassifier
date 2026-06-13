@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Video } from 'lucide-react'
 
 export const VideoPreview = ({ videoUrl, onFrameCapture }) => {
   const videoRef = useRef(null)
@@ -35,22 +36,21 @@ export const VideoPreview = ({ videoUrl, onFrameCapture }) => {
 
   return (
     <div className="preview-container">
-      <h3>Video Preview</h3>
-      <video
-        ref={videoRef}
-        src={videoUrl}
-        controls
-        className="preview-video"
-        onLoadedMetadata={handleLoadedMetadata}
-        onSeeked={captureFirstFrame}
-      />
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
-      {frameUrl && (
-        <div>
-          <p>First Frame:</p>
-          <img src={frameUrl} alt="first frame" className="preview-image" />
-        </div>
-      )}
+      <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+        <Video size={18} className="text-muted" /> Video Preview
+      </h3>
+      <div style={{ display: 'flex', justifyContent: 'center', background: 'var(--surface-hover)', borderRadius: 'var(--r-sm)', padding: '16px', border: '1px dashed var(--border)' }}>
+        <video
+          ref={videoRef}
+          src={videoUrl}
+          controls
+          className="preview-video"
+          onLoadedMetadata={handleLoadedMetadata}
+          onSeeked={captureFirstFrame}
+          style={{ maxHeight: '400px' }}
+        />
+        <canvas ref={canvasRef} style={{ display: 'none' }} />
+      </div>
     </div>
   )
 }

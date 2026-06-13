@@ -6,6 +6,7 @@ import { ImagePreview } from './ImagePreview'
 import { VideoPreview } from './VideoPreview'
 import { CropSelector } from './CropSelector'
 import { uploadImage, uploadVideo } from '../../services/uploadApi'
+import { DemoSampleSelector } from './DemoSampleSelector'
 
 const DEFAULT_CROP = {
   unit: '%',
@@ -13,6 +14,15 @@ const DEFAULT_CROP = {
   y: 10,
   width: 80,
   height: 80,
+}
+
+// predefined crop for demo video. change later when i find better demo video 
+const DEMO_VIDEO_CROP = {
+  unit: '%',
+  x: 0,
+  y: 25,
+  width: 62,
+  height: 62,
 }
 
 export const UploadForm = ({ onUploadSuccess, setLoading, setError }) => {
@@ -26,17 +36,21 @@ export const UploadForm = ({ onUploadSuccess, setLoading, setError }) => {
   const [videoDimensions, setVideoDimensions] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
+  const resetPreviewState = () => {
+    setPreview(null)
+    setFrameUrl(null)
+    setVideoDimensions(null)
+  }
+
   const handleInputTypeChange = (event) => {
     const nextType = event.target.value
 
     setInputType(nextType)
     setFile(null)
-    setPreview(null)
+    resetPreviewState()
     setModelType('')
     setInterval(1)
     setCrop(DEFAULT_CROP)
-    setFrameUrl(null)
-    setVideoDimensions(null)
     setError('')
   }
 
@@ -50,6 +64,26 @@ export const UploadForm = ({ onUploadSuccess, setLoading, setError }) => {
     setFrameUrl(null)
     setVideoDimensions(null)
     setError('')
+  }
+
+  const handleDemoSelected = ({ file: demoFile, inputType: demoInputType }) => {
+    setInputType(demoInputType)
+    setFile(demoFile)
+    setPreview(URL.createObjectURL(demoFile))
+    setFrameUrl(null)
+    setVideoDimensions(null)
+    setError('')
+
+    // Make demo flow easier for portfolio users.
+    setModelType('yolo')
+
+    if (demoInputType === 'video') {
+      setInterval(1.6)
+      setCrop(DEMO_VIDEO_CROP)
+    } else {
+      setInterval(1)
+      setCrop(DEFAULT_CROP)
+    }
   }
 
   const handleFrameCapture = (frameDataUrl, width, height) => {
@@ -79,7 +113,7 @@ export const UploadForm = ({ onUploadSuccess, setLoading, setError }) => {
     event.preventDefault()
 
     if (!file) {
-      setError('Please select a file.')
+      setError('Please select a file or use a demo sample.')
       return
     }
 
@@ -117,7 +151,11 @@ export const UploadForm = ({ onUploadSuccess, setLoading, setError }) => {
       const errorMsg =
         typeof error === 'string'
           ? error
-          : error?.error || error?.detail || error?.message || JSON.stringify(error)
+          : error?.error ||
+          error?.detail ||
+          error?.message ||
+          JSON.stringify(error)
+
       setError(`Upload failed: ${errorMsg}`)
     } finally {
       setSubmitting(false)
@@ -127,6 +165,11 @@ export const UploadForm = ({ onUploadSuccess, setLoading, setError }) => {
 
   return (
     <form onSubmit={handleSubmit} className="upload-form">
+      <DemoSampleSelector
+        onDemoSelected={handleDemoSelected}
+        disabled={submitting}
+      />
+
       <div className="form-group">
         <label>Input Type:</label>
         <select
@@ -144,6 +187,12 @@ export const UploadForm = ({ onUploadSuccess, setLoading, setError }) => {
         onFileChange={handleFileChange}
         disabled={submitting}
       />
+
+      {file && (
+        <p>
+          Selected file: <strong>{file.name}</strong>
+        </p>
+      )}
 
       {inputType === 'image' && <ImagePreview imageUrl={preview} />}
 
@@ -177,8 +226,8 @@ export const UploadForm = ({ onUploadSuccess, setLoading, setError }) => {
         disabled={submitting}
       />
 
-      <button type="submit" disabled={submitting || !file || !modelType}>
-        {submitting ? 'Uploading...' : 'Submit'}
+      <button type="submit" className="btn-primary" disabled={submitting || !file || !modelType} style={{ padding: '12px', fontSize: '15px', marginTop: '8px', width: '100%' }}>
+        {submitting ? 'Uploading...' : 'Submit Media for Analysis'}
       </button>
     </form>
   )

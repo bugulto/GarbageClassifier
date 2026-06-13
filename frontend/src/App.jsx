@@ -9,16 +9,18 @@ import './styles.css'
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
-      <main>
-        <Routes>
-          <Route path="/upload" element={<UploadPage />} />
-          <Route path="/history" element={<HistoryPage />} />
-          <Route path="/history/:jobId" element={<ResultDetailPage />} />
-          <Route path="/chat" element={<ChatPage />} />
-          <Route path="*" element={<Navigate to="/upload" replace />} />
-        </Routes>
-      </main>
+      <div className="app-shell">
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/upload" element={<UploadPage />} />
+            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/history/:jobId" element={<ResultDetailPage />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="*" element={<Navigate to="/upload" replace />} />
+          </Routes>
+        </main>
+      </div>
     </BrowserRouter>
   )
 }
