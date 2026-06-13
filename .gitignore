@@ -1,2 +1,6 @@
 __pycache__/
 models/weights/*.pth
+/gcenv
+test
+
+

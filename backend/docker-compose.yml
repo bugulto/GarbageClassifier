@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: gc_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: garbage_classifier_db
+      POSTGRES_USER: gc_user
+      POSTGRES_PASSWORD: gc_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - gc_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  gc_postgres_data:
