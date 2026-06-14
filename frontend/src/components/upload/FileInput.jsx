@@ -10,6 +10,14 @@ export const FileInput = ({ inputType, onFileChange, disabled }) => {
         accept={accept}
         onChange={onFileChange}
         disabled={disabled}
+        style={{
+          border: '1px dashed var(--border)',
+          padding: '16px',
+          borderRadius: 'var(--r-md)',
+          background: 'var(--surface-hover)',
+          width: '100%',
+          cursor: 'pointer'
+        }}
       />
     </div>
   )

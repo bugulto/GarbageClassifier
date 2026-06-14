@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { ResultView } from '../components/results/ResultView'
+import { ResultTabs } from '../components/results/ResultTabs'
 import { ChatPanel } from '../components/chat/ChatPanel'
 import { getJobDetail } from '../services/resultsApi'
+import { Badge } from '../components/ui/Badge'
+import { ArrowLeft, FileText } from 'lucide-react'
 
 export const ResultDetailPage = () => {
   const { jobId } = useParams()
+  const navigate = useNavigate()
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -25,18 +29,52 @@ export const ResultDetailPage = () => {
     fetchDetail()
   }, [jobId])
 
+  const getStatusVariant = (status) => {
+    if (status === 'completed') return 'green'
+    if (status === 'failed') return 'red'
+    return 'warning'
+  }
+
   return (
     <div className="page-container">
-      <Link to="/history">&larr; Back to History</Link>
+      <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <button onClick={() => navigate('/history')} className="btn-outline" style={{ padding: '8px', border: 'none' }}>
+          <ArrowLeft size={18} />
+        </button>
+        <h1 style={{ marginBottom: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <FileText size={24} className="text-muted" />
+          {result ? result.original_filename : `Job Detail: ${jobId}`}
+        </h1>
+        {result && (
+          <Badge variant={getStatusVariant(result.status)}>
+            {result.message || result.status || 'Unknown'}
+          </Badge>
+        )}
+      </div>
 
-      <h1>Job Detail: {jobId}</h1>
+      {loading && (
+        <div className="alert-box alert-loading">Loading job details...</div>
+      )}
+      {error && (
+        <div className="alert-box alert-error">{error}</div>
+      )}
+      
+      {result && (
+        <>
+          <div className="dashboard-grid">
+            <div className="dashboard-main">
+              <ResultView result={result} />
+            </div>
 
-      {loading && <p className="loading-text">Loading job details...</p>}
-      {error && <p className="error-text">{error}</p>}
-      {result && <ResultView result={result} />}
-
-      <hr />
-      <ChatPanel jobId={jobId} />
+            <div className="dashboard-sidebar">
+              <div className="sticky-sidebar">
+                <ChatPanel jobId={jobId} />
+              </div>
+            </div>
+          </div>
+          <ResultTabs result={result} />
+        </>
+      )}
     </div>
   )
 }

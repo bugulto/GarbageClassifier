@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { SendHorizontal } from 'lucide-react'
 
-export const ChatInput = ({ onSend, disabled }) => {
+export const ChatInput = ({ onSend, disabled, placeholder }) => {
   const [text, setText] = useState('')
 
   const handleSubmit = (event) => {
@@ -17,12 +18,11 @@ export const ChatInput = ({ onSend, disabled }) => {
         type="text"
         value={text}
         onChange={(event) => setText(event.target.value)}
-        placeholder="Type your question..."
+        placeholder={placeholder || "Type your question..."}
         disabled={disabled}
-        className="chat-input"
       />
-      <button type="submit" disabled={disabled || !text.trim()}>
-        Send
+      <button type="submit" disabled={disabled || !text.trim()} className="btn-primary" style={{ padding: '10px' }}>
+        <SendHorizontal size={18} />
       </button>
     </form>
   )

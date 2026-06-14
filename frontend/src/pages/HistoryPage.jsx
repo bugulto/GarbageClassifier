@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import { JobHistoryTable } from '../components/history/JobHistoryTable'
 import { HistoryFilters } from '../components/history/HistoryFilters'
 import { getJobs } from '../services/resultsApi'
+import { SectionHeader } from '../components/ui/SectionHeader'
+import { History } from 'lucide-react'
+import { Card } from '../components/ui/Card'
 
 const DEFAULT_FILTERS = {
   input_type: '',
@@ -54,7 +57,12 @@ export const HistoryPage = () => {
 
   return (
     <div className="page-container">
-      <h1>Job History</h1>
+      <SectionHeader 
+        title="Job History" 
+        subtitle="Review and filter past classification jobs."
+        icon={History}
+        className="page-header"
+      />
 
       <HistoryFilters
         filters={filters}
@@ -62,10 +70,14 @@ export const HistoryPage = () => {
         onReset={handleReset}
       />
 
-      {loading && <p className="loading-text">Loading history...</p>}
-      {error && <p className="error-text">{error}</p>}
+      {loading && <div className="alert-box alert-loading">Loading history...</div>}
+      {error && <div className="alert-box alert-error">{error}</div>}
 
-      {!loading && !error && <JobHistoryTable jobs={jobs} />}
+      {!loading && !error && (
+        <Card style={{ padding: '0', overflow: 'hidden' }}>
+          <JobHistoryTable jobs={jobs} />
+        </Card>
+      )}
     </div>
   )
 }
