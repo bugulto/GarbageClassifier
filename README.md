@@ -123,12 +123,11 @@ The Django REST Framework exposes several key endpoints to facilitate frontend-b
 
 ## Screenshots
 
-*(Placeholder: Add screenshots of the Upload UI, Dashboard/Results Page, and Chatbot Interface here)*
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
-![alt text](<Screenshot from 2026-06-14 15-57-54.png>)
-![alt text](image-3.png)
+![Upload UI](<ss/Screenshot from 2026-06-14 15-53-58.png>)
+![Dashboard/Results Page](<ss/Screenshot from 2026-06-14 15-55-21.png>)
+![Job Details](<ss/Screenshot from 2026-06-14 15-56-14.png>)
+![Chatbot Interface 1](<ss/Screenshot from 2026-06-14 15-57-54.png>)
+![Chatbot Interface 2](<ss/Screenshot from 2026-06-14 15-58-26.png>)
 
 ## Future Improvements
 
