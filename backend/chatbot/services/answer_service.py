@@ -1,12 +1,13 @@
 from django.conf import settings
-from langchain_ollama import ChatOllama
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 class HybridLlamaAnswerService:
     def __init__(self):
-        self.llm = ChatOllama(
-            model=settings.OLLAMA_CHAT_MODEL,
-            temperature=settings.OLLAMA_TEMPERATURE,
+        self.llm = ChatGoogleGenerativeAI(
+            model=settings.GEMINI_CHAT_MODEL,
+            temperature=settings.GEMINI_TEMPERATURE,
+            google_api_key=settings.GEMINI_API_KEY,
         )
 
     def answer(self, question, db_context, rag_context):
@@ -36,10 +37,19 @@ class HybridLlamaAnswerService:
             ]
         )
 
-        return response.content.strip()
+        content = response.content
+        if isinstance(content, list):
+            text_parts = [
+                block.get("text", "") 
+                for block in content 
+                if isinstance(block, dict) and "text" in block
+            ]
+            return "".join(text_parts).strip()
+
+        return content.strip()
 
 
-# Phase I
+# Phase I (uses ollama)
 
 # from django.conf import settings
 # from langchain_ollama import ChatOllama

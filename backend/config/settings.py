@@ -145,12 +145,23 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MODAL_INFERENCE_URL = os.getenv("MODAL_INFERENCE_URL")
 MODAL_INFERENCE_TIMEOUT = int(os.getenv("MODAL_INFERENCE_TIMEOUT", 300))
 
-OLLAMA_CHAT_MODEL = os.getenv("OLLAMA_CHAT_MODEL", "llama3")
-OLLAMA_TEMPERATURE = float(os.getenv("OLLAMA_TEMPERATURE", 0))
+# OLLAMA_CHAT_MODEL = os.getenv("OLLAMA_CHAT_MODEL", "llama3")
+# OLLAMA_TEMPERATURE = float(os.getenv("OLLAMA_TEMPERATURE", 0))
 
-OLLAMA_EMBEDDING_MODEL = os.getenv(
-    "OLLAMA_EMBEDDING_MODEL",
-    "embeddinggemma:latest",
+# OLLAMA_EMBEDDING_MODEL = os.getenv(
+#     "OLLAMA_EMBEDDING_MODEL",
+#     "embeddinggemma:latest",
+# )
+
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+ 
+GEMINI_CHAT_MODEL = os.environ.get("GEMINI_CHAT_MODEL", "gemini-3.1-flash-lite")
+GEMINI_TEMPERATURE = float(os.environ.get("GEMINI_TEMPERATURE", "0"))
+
+GEMINI_EMBEDDING_MODEL = os.environ.get(
+    "GEMINI_EMBEDDING_MODEL", "gemini-embedding-001"
 )
+
+GEMINI_EMBEDDING_DIM = int(os.environ.get("GEMINI_EMBEDDING_DIM", "768"))
 
 RAG_TOP_K = int(os.getenv("RAG_TOP_K", 3))
