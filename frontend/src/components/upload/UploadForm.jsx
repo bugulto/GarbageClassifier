@@ -20,9 +20,9 @@ const DEFAULT_CROP = {
 const DEMO_VIDEO_CROP = {
   unit: '%',
   x: 0,
-  y: 25,
-  width: 62,
-  height: 62,
+  y: 35,
+  width: 65,
+  height: 65,
 }
 
 export const UploadForm = ({ onUploadSuccess, setLoading, setError }) => {
@@ -78,7 +78,7 @@ export const UploadForm = ({ onUploadSuccess, setLoading, setError }) => {
     setModelType('yolo')
 
     if (demoInputType === 'video') {
-      setInterval(1.6)
+      setInterval(3.5)
       setCrop(DEMO_VIDEO_CROP)
     } else {
       setInterval(1)
