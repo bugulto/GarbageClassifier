@@ -27,14 +27,6 @@ def _get_output_filename(input_type, image_path):
     name, _ = os.path.splitext(basename)
     return f"annotated_{name}.jpg"
 
-
-def _build_annotated_url(request, annotated_image_path):
-    """Build an absolute URL for the annotated image."""
-    return request.build_absolute_uri(
-        default_storage.url(annotated_image_path)
-    )
-
-
 def save_results_and_build_response(
     request,
     job_id,
@@ -84,17 +76,12 @@ def save_results_and_build_response(
                 output_filename=output_filename,
             )
 
-            annotated_image_url = _build_annotated_url(
-                request, annotated_image_path
-            )
-
             snapshot_meta = snapshot_lookup.get(image_path, {})
 
             result_image = ResultImage.objects.create(
                 job=job,
                 result_type="snapshot" if input_type == "video" else "image",
                 annotated_image_path=annotated_image_path,
-                annotated_image_url=annotated_image_url,
                 image_width=image_width,
                 image_height=image_height,
                 timestamp_seconds=snapshot_meta.get("timestamp_seconds"),

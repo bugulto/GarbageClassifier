@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.files.storage import default_storage, storages
 
 
 class Job(models.Model):
@@ -75,7 +76,6 @@ class ResultImage(models.Model):
     result_type = models.CharField(max_length=20, choices=RESULT_TYPE_CHOICES)
 
     annotated_image_path = models.CharField(max_length=500)
-    annotated_image_url = models.URLField(max_length=1000, blank=True, null=True)
 
     image_width = models.IntegerField()
     image_height = models.IntegerField()
@@ -94,6 +94,13 @@ class ResultImage(models.Model):
 
     def __str__(self):
         return f"{self.job.job_id} - {self.result_type}"
+    
+    @property
+    def annotated_image_url(self):
+        if not self.annotated_image_path:
+            return None
+        b2_storage = storages['b2']
+        return b2_storage.url(self.annotated_image_path)  # signed temporary URL from cloud storage (BlackBlaze B2 via django-storages)
 
 
 class Detection(models.Model):

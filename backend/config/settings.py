@@ -42,6 +42,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
+    "storages",
     "uploads",
     "preprocessing",
     "inference",
@@ -138,6 +139,33 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
+
+# Storage 
+AWS_ACCESS_KEY_ID = os.environ.get("B2_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("B2_APPLICATION_KEY")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("B2_BUCKET_NAME")
+ 
+AWS_S3_REGION_NAME = os.environ.get("B2_REGION")  
+AWS_S3_ENDPOINT_URL = f"https://s3.{AWS_S3_REGION_NAME}.backblazeb2.com"
+ 
+AWS_QUERYSTRING_AUTH = True
+AWS_QUERYSTRING_EXPIRE = 3600 
+ 
+AWS_DEFAULT_ACL = None
+ 
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+ 
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+    "b2": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    }
+}
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")

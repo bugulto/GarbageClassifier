@@ -3,6 +3,8 @@ import os
 import cv2
 
 from django.conf import settings
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage, storages
 
 
 BBOX_COLOR = (0, 255, 0)
@@ -74,13 +76,22 @@ def create_annotated_image(job_id, source_image_path, detections,
 
     draw_detections(image, detections, image_width, image_height)
 
-    result_dir = os.path.join(settings.MEDIA_ROOT, "results", job_id)
-    os.makedirs(result_dir, exist_ok=True)
-
     if output_filename is None:
         output_filename = "annotated_original.jpg"
-
-    output_full_path = os.path.join(result_dir, output_filename)
-    cv2.imwrite(output_full_path, image)
-
-    return f"results/{job_id}/{output_filename}"
+ 
+    success, encoded_image = cv2.imencode(".jpg", image)
+ 
+    if not success:
+        raise ValueError("Failed to encode annotated image.")
+ 
+    storage_key = f"results/{job_id}/{output_filename}"
+ 
+    # Upload to Backblaze B2 via the b2 storage backend
+    b2_storage = storages['b2']
+    b2_storage.save(
+        storage_key,
+        ContentFile(encoded_image.tobytes()),
+    )
+ 
+    return storage_key
+ 

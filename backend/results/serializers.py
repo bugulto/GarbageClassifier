@@ -37,6 +37,8 @@ class DetectionSerializer(serializers.ModelSerializer):
 class ResultImageSerializer(serializers.ModelSerializer):
     detections = DetectionSerializer(many=True, read_only=True)
 
+    annotated_image_url = serializers.SerializerMethodField() # every request will generate a signed temporary URL from cloud storage
+
     class Meta:
         model = ResultImage
         fields = [
@@ -50,7 +52,10 @@ class ResultImageSerializer(serializers.ModelSerializer):
             "detection_count",
             "detections",
         ]
-
+    
+    def get_annotated_image_url(self, obj):
+        return obj.annotated_image_url
+    
 
 class JobListSerializer(serializers.ModelSerializer):
     summary = serializers.SerializerMethodField()
