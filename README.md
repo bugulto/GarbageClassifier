@@ -1,4 +1,4 @@
-# Industrial Garbage Classification & Analysis Platform
+# Waste Vision: An Industrial Garbage Classification & Analysis Platform
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=vercel)](https://waste-vision-phi.vercel.app/)
 [![API Backend](https://img.shields.io/badge/Backend-Render-blue?style=for-the-badge&logo=render)](https://garbageclassifier.onrender.com/api)
@@ -85,7 +85,6 @@ Every classification job generates a natural-language summary (e.g. *"Job 45 pro
 ### 5. Type-Safe React Frontend
 
 - Built with Vite for fast development and optimized production builds.
-- Robust environment variable normalization: cleans trailing slashes and dynamically appends `/api` prefixes if omitted from `VITE_API_BASE_URL`.
 - `npm run lint` produces zero errors and zero warnings under strict ESLint configuration (`no-unused-vars`, `react-hooks` rules).
 
 ---
@@ -184,11 +183,11 @@ npm run dev
 
 | View | Preview |
 | :--- | :--- |
-| Media Upload Workspace | ![Upload Workspace](ss/Screenshot%20from%202026-06-14%2015-53-58.png) |
-| Job Details Dashboard | ![Details Dashboard](ss/Screenshot%20from%202026-06-14%2015-55-21.png) |
-| Detection Details View | ![Detections View](ss/Screenshot%20from%202026-06-14%2015-56-14.png) |
-| Job-Scoped Chat Assistant | ![Local Chat](ss/Screenshot%20from%202026-06-14%2015-57-54.png) |
-| Global Analytical Chat | ![Global Chat](ss/Screenshot%20from%202026-06-14%2015-58-26.png) |
+| Upload Page — Image / Video Inference Workspace | ![Upload Page](ss/upload_page.png) |
+| Upload Page — Annotated Results After Inference | ![Annotated Results](ss/annoted_results.png) |
+| Job History — Browsable Classification Log | ![History Page](ss/history_page.png) |
+| Job Detail Page — Detections, Annotated Results and job specific Chat | ![Job Detail](ss/job_specific_page.png) |
+| Global Chat — Multi-Job RAG Analytics | ![Global Chat](ss/global_chat.png) |
 
 ---
 
