@@ -20,6 +20,7 @@ export const ResultDetailPage = () => {
         const data = await getJobDetail(jobId)
         setResult(data)
       } catch (err) {
+        console.error(err)
         setError('Failed to load job details.')
       } finally {
         setLoading(false)

@@ -19,6 +19,7 @@ export const ChatPanel = forwardRef(({ jobId }, ref) => {
       const response = await askQuestion(question, jobId)
       setMessages((prev) => [...prev, response])
     } catch (error) {
+      console.error(error)
       setMessages((prev) => [
         ...prev,
         { role: 'assistant', content: 'Error: Could not get a response.' },

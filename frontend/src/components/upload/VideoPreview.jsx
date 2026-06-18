@@ -1,10 +1,9 @@
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { Video } from 'lucide-react'
 
 export const VideoPreview = ({ videoUrl, onFrameCapture }) => {
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
-  const [frameUrl, setFrameUrl] = useState(null)
 
   const captureFirstFrame = () => {
     if (!videoRef.current || !canvasRef.current) return
@@ -18,7 +17,6 @@ export const VideoPreview = ({ videoUrl, onFrameCapture }) => {
     context.drawImage(video, 0, 0, canvas.width, canvas.height)
 
     const url = canvas.toDataURL('image/jpeg')
-    setFrameUrl(url)
     onFrameCapture(url, video.videoWidth, video.videoHeight)
   }
 

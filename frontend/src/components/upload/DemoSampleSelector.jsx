@@ -1,5 +1,3 @@
-import { Card } from '../ui/Card'
-
 export const DemoSampleSelector = ({ onDemoSelected, disabled }) => {
   const loadDemoFile = async (demoType) => {
     const demoConfig =

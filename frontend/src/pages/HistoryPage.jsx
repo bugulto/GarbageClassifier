@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { JobHistoryTable } from '../components/history/JobHistoryTable'
 import { HistoryFilters } from '../components/history/HistoryFilters'
 import { getJobs } from '../services/resultsApi'
@@ -18,7 +18,7 @@ export const HistoryPage = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  const fetchJobs = async (currentFilters = filters) => {
+  const fetchJobs = useCallback(async (currentFilters) => {
     setLoading(true)
     setError('')
 
@@ -39,10 +39,38 @@ export const HistoryPage = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
-    fetchJobs(DEFAULT_FILTERS)
+    let isMounted = true
+    const initFetch = async () => {
+      try {
+        const activeFilters = Object.fromEntries(
+          Object.entries(DEFAULT_FILTERS).filter(([, value]) => value !== '')
+        )
+        const data = await getJobs(activeFilters)
+        if (isMounted) {
+          setJobs(data)
+        }
+      } catch (err) {
+        if (isMounted) {
+          const message =
+            err.response?.data?.detail ||
+            err.response?.data?.error ||
+            'Failed to load job history.'
+          setError(message)
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    initFetch()
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   const handleFilterChange = (newFilters) => {
