@@ -1,12 +1,19 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Navbar } from './components/layout/Navbar'
 import { UploadPage } from './pages/UploadPage'
 import { HistoryPage } from './pages/HistoryPage'
 import { ResultDetailPage } from './pages/ResultDetailPage'
 import { ChatPage } from './pages/ChatPage'
+import { API_BASE_URL } from './services/apiConfig'
 import './styles.css'
 
 function App() {
+  useEffect(() => {
+    // Wake up backend to avoid Render cold starts
+    fetch(`${API_BASE_URL}/health/`).catch(() => {})
+  }, [])
+
   return (
     <BrowserRouter>
       <div className="app-shell">

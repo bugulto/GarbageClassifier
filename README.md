@@ -14,7 +14,7 @@
 | Frontend Application | [https://waste-vision-phi.vercel.app](https://waste-vision-phi.vercel.app) — hosted on Vercel |
 | Backend API | [https://garbageclassifier.onrender.com/api](https://garbageclassifier.onrender.com/api) — hosted on Render |
 
-> **Note:** The backend is hosted on Render's free tier and spins down after inactivity. The first request after a period of idle may take 20–30 seconds to respond while the service cold-starts. Subsequent requests are normal speed.
+> **Note:** The backend is hosted on Render's free tier and spins down after inactivity. The first request after a period of idle may take 30-60 seconds to respond while the service cold-starts. Subsequent requests are normal speed.
 
 ---
 
