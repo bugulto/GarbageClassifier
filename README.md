@@ -89,6 +89,12 @@ Every classification job generates a natural-language summary (e.g. *"Job 45 pro
 
 ---
 
+## Model Training and Evaluation
+
+For comprehensive details regarding the dataset, training methodology, evaluation metrics (mAP, F1 Score), and comparative analysis of the object detection models used in this project (YOLO26 Nano, Faster R-CNN, and SSD300-VGG16), please refer to the dedicated **[Model Training Documentation](./TRAINING.md)**.
+
+---
+
 ## Database Schema
 
 Managed in PostgreSQL (Supabase, with `pgvector` extension enabled):
