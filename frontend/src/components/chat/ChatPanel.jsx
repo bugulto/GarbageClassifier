@@ -36,10 +36,10 @@ export const ChatPanel = forwardRef(({ jobId }, ref) => {
   const title = jobId
     ? 'Ask about this result'
     : 'Garbage Classification Chatbot'
-    
+
   const placeholderText = jobId
     ? "Ask about this classification result..."
-    : "Ask about all saved classification jobs..."
+    : "Ask about all past jobs..."
 
   const jobExamples = [
     "Summarize this result.",
@@ -62,7 +62,7 @@ export const ChatPanel = forwardRef(({ jobId }, ref) => {
   const examples = jobId ? jobExamples : globalExamples
 
   return (
-    <div className={`chat-panel ${!jobId ? 'chat-panel-centered' : ''}`}>
+    <div className={`chat-panel ${!jobId ? 'chat-panel-centered' : 'chat-panel-centered'}`}>
       <div className="chat-header">
         <MessageCircle size={18} className="text-muted" />
         {title}
