@@ -4,12 +4,16 @@ export const ImagePreview = ({ imageUrl }) => {
   if (!imageUrl) return null
 
   return (
-    <div className="preview-container">
-      <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-        <ImageIcon size={18} className="text-muted" /> Image Preview
-      </h3>
-      <div style={{ display: 'flex', justifyContent: 'center', background: 'var(--surface-hover)', borderRadius: 'var(--r-sm)', padding: '16px', border: '1px dashed var(--border)' }}>
-        <img src={imageUrl} alt="preview" className="preview-image" style={{ maxHeight: '400px', objectFit: 'contain' }} />
+    <div className="chat-panel" style={{ marginBottom: 0 }}>
+      <div className="chat-header">
+        <ImageIcon size={18} className="text-muted" />
+        Image Preview
+      </div>
+      <div style={{ 
+        flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', 
+        padding: '14px' 
+      }}>
+        <img src={imageUrl} alt="preview" className="preview-image" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
       </div>
     </div>
   )

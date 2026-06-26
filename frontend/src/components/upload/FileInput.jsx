@@ -3,7 +3,7 @@ export const FileInput = ({ inputType, onFileChange, disabled }) => {
 
   return (
     <div className="form-group">
-      <label>Upload {inputType}:</label>
+      <label>Upload {inputType}</label>
       <input
         key={inputType}
         type="file"
@@ -12,11 +12,12 @@ export const FileInput = ({ inputType, onFileChange, disabled }) => {
         disabled={disabled}
         style={{
           border: '1px dashed var(--border)',
-          padding: '16px',
+          padding: '10px',
           borderRadius: 'var(--r-md)',
           background: 'var(--surface-hover)',
           width: '100%',
-          cursor: 'pointer'
+          cursor: 'pointer',
+          fontSize: '12px',
         }}
       />
     </div>
