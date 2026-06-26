@@ -1,16 +1,11 @@
 import { useState } from 'react'
-import { Card } from '../ui/Card'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 
 export const DetectionTable = ({ resultImages }) => {
   const [showBbox, setShowBbox] = useState(false)
 
   if (!resultImages || resultImages.length === 0) {
-    return (
-      <Card className="detection-table-container">
-        <p className="text-muted">No detections available.</p>
-      </Card>
-    )
+    return <p className="text-muted" style={{ fontSize: '13px' }}>No detections available.</p>
   }
 
   // Flatten detections from all result images
@@ -20,7 +15,7 @@ export const DetectionTable = ({ resultImages }) => {
 
     img.detections.forEach((det) => {
       rows.push({
-        imageLabel: img.snapshot_index != null ? `Snapshot #${img.snapshot_index}` : `Image #${imgIndex + 1}`,
+        imageLabel: img.snapshot_index != null ? `#${img.snapshot_index}` : `#${imgIndex + 1}`,
         timestamp: img.timestamp_seconds != null ? `${img.timestamp_seconds}s` : '-',
         className: det.class_name,
         confidence: det.confidence,
@@ -33,24 +28,19 @@ export const DetectionTable = ({ resultImages }) => {
   })
 
   if (rows.length === 0) {
-    return (
-      <Card className="detection-table-container">
-        <p className="text-muted">No detections available.</p>
-      </Card>
-    )
+    return <p className="text-muted" style={{ fontSize: '13px' }}>No detections available.</p>
   }
 
   return (
-    <Card className="detection-table-container">
-      <div className="card-header">
-        <h3>Detection Details</h3>
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '6px' }}>
         <button 
           type="button" 
           onClick={() => setShowBbox(!showBbox)}
           className="btn-outline"
-          style={{ fontSize: '13px', padding: '6px 12px', borderRadius: '16px' }}
+          style={{ fontSize: '11px', padding: '3px 8px', borderRadius: '12px' }}
         >
-          {showBbox ? <><ChevronUp size={14}/> Hide Technical</> : <><ChevronDown size={14}/> Show Technical</>}
+          {showBbox ? <><ChevronUp size={12}/> Hide Bbox</> : <><ChevronDown size={12}/> Show Bbox</>}
         </button>
       </div>
       
@@ -58,8 +48,8 @@ export const DetectionTable = ({ resultImages }) => {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Image/Snapshot</th>
-              <th>Timestamp</th>
+              <th>Snapshot</th>
+              <th>Time</th>
               <th>Class</th>
               <th>Confidence</th>
               {showBbox && <th>x1</th>}
@@ -75,15 +65,15 @@ export const DetectionTable = ({ resultImages }) => {
                 <td className="text-muted">{row.timestamp}</td>
                 <td><span className="class-chip" style={{ marginBottom: 0 }}>{row.className}</span></td>
                 <td>{(row.confidence * 100).toFixed(1)}%</td>
-                {showBbox && <td className="text-muted" style={{ fontFamily: 'var(--font-mono)' }}>{row.x1.toFixed(1)}</td>}
-                {showBbox && <td className="text-muted" style={{ fontFamily: 'var(--font-mono)' }}>{row.y1.toFixed(1)}</td>}
-                {showBbox && <td className="text-muted" style={{ fontFamily: 'var(--font-mono)' }}>{row.x2.toFixed(1)}</td>}
-                {showBbox && <td className="text-muted" style={{ fontFamily: 'var(--font-mono)' }}>{row.y2.toFixed(1)}</td>}
+                {showBbox && <td className="text-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px' }}>{row.x1.toFixed(0)}</td>}
+                {showBbox && <td className="text-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px' }}>{row.y1.toFixed(0)}</td>}
+                {showBbox && <td className="text-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px' }}>{row.x2.toFixed(0)}</td>}
+                {showBbox && <td className="text-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px' }}>{row.y2.toFixed(0)}</td>}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-    </Card>
+    </div>
   )
 }
