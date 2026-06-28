@@ -1,66 +1,126 @@
 import { useState } from 'react'
-import { UploadForm } from '../components/upload/UploadForm'
-import { ResultView } from '../components/results/ResultView'
-import { ResultTabs } from '../components/results/ResultTabs'
+import { UploadControls } from '../components/upload/UploadControls'
+import { useUploadState } from '../components/upload/useUploadState'
+import { ImagePreview } from '../components/upload/ImagePreview'
+
+import { VideoPreview } from '../components/upload/VideoPreview'
+import { CropSelector } from '../components/upload/CropSelector'
+import { ResultSummary } from '../components/results/ResultSummary'
+import { ClassSummaryCards } from '../components/results/ClassSummaryCards'
+import { ResultImageGallery } from '../components/results/ResultImageGallery'
+import { DetectionTable } from '../components/results/DetectionTable'
 import { ChatPanel } from '../components/chat/ChatPanel'
-import { EmptyState } from '../components/shared/EmptyState'
-import { SectionHeader } from '../components/ui/SectionHeader'
-import { UploadCloud, Image as ImageIcon } from 'lucide-react'
-import { Card } from '../components/ui/Card'
+import { Eye, UploadCloud } from 'lucide-react'
 
 export const UploadPage = () => {
   const [result, setResult] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  return (
-    <div className="page-container">
-      <SectionHeader 
-        title="Upload & Analyze" 
-        subtitle="Upload an image or video to classify detected garbage items using our AI models."
-        icon={UploadCloud}
-        className="page-header"
-      />
+  const uploadState = useUploadState({
+    onUploadSuccess: setResult,
+    onClearResult: () => setResult(null),
+    setLoading,
+    setError
+  })
 
-      <div className="dashboard-grid">
-        <div className="dashboard-main">
-          <Card>
-            <UploadForm
-              onUploadSuccess={setResult}
-              setLoading={setLoading}
-              setError={setError}
+  const renderVisuals = () => {
+    if (result) {
+      return <ResultImageGallery resultImages={result.result_images} />
+    }
+    if (uploadState.inputType === 'image' && uploadState.preview) {
+      return <ImagePreview imageUrl={uploadState.preview} />
+    }
+    if (uploadState.inputType === 'video' && uploadState.preview) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '10px' }}>
+          <div style={{ flex: 4, minHeight: 0 }}>
+            <VideoPreview videoUrl={uploadState.preview} onFrameCapture={uploadState.handleFrameCapture} />
+          </div>
+          <div style={{ flex: 6, minHeight: 0 }}>
+            <CropSelector
+              videoUrl={uploadState.preview}
+              imageSrc={uploadState.frameUrl}
+              crop={uploadState.crop}
+              onCropChange={uploadState.setCrop}
+              onFrameReady={uploadState.handleFrameCapture}
+              disabled={uploadState.submitting}
             />
-
-            {loading && (
-              <div className="alert-box alert-loading" style={{ marginTop: '20px' }}>
-                Analyzing media, please wait...
-              </div>
-            )}
-            {error && (
-              <div className="alert-box alert-error" style={{ marginTop: '20px' }}>
-                {error}
-              </div>
-            )}
-          </Card>
+          </div>
         </div>
+      )
+    }
+    return (
+      <div style={{
+        height: '100%', minHeight: '120px', border: '2px dashed var(--border)', borderRadius: 'var(--r-lg)',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        background: 'var(--surface)', gap: '8px'
+      }}>
+        <Eye size={28} style={{ color: 'var(--text-muted)', opacity: 0.5 }} />
+        <p className="text-muted" style={{ fontSize: '12px' }}>Upload or select a sample to preview</p>
+      </div>
+    )
+  }
 
-        <div className="dashboard-sidebar">
-          {!result ? (
-            <EmptyState 
-              title="No Result Yet"
-              description="Upload a file or choose a demo sample to view analysis here."
-              icon={ImageIcon}
-            />
-          ) : (
-            <div className="sticky-sidebar">
-              <ResultView result={result} />
-              <ChatPanel jobId={result.job_id} />
+  return (
+    <div className="page-viewport-locked">
+      <div className="dashboard-grid">
+
+        {/* ── LEFT COLUMN: Controls & Quick Stats ── */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0, overflow: 'hidden' }}>
+          <div className="chat-panel" style={{ flex: 1, minHeight: 0 }}>
+            <div className="chat-header">
+              <UploadCloud size={18} className="text-muted" />
+              Upload and Analyse
+            </div>
+            <div style={{ padding: '14px', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+              <UploadControls state={uploadState} />
+              {error && <div className="alert-box alert-error" style={{ marginTop: '10px', marginBottom: 0 }}>{error}</div>}
+            </div>
+          </div>
+
+          {result && (
+            <div style={{ flexShrink: 0, maxHeight: '200px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+              <ClassSummaryCards summary={result.summary} />
             </div>
           )}
         </div>
-      </div>
 
-      {result && <ResultTabs result={result} />}
+        {/* ── MIDDLE COLUMN: Visuals (top) & Table (bottom) ── */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0, overflow: 'hidden' }}>
+
+          {/* Visuals area */}
+          <div style={{ flex: result ? '1 1 55%' : '1 1 100%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+            <div className="dashboard-pane-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+              {renderVisuals()}
+            </div>
+          </div>
+
+          {/* Table area */}
+          {result && (
+            <div style={{ flex: '1 1 45%', minHeight: 0, display: 'flex', flexDirection: 'column', borderTop: '1px solid var(--border)', paddingTop: '8px' }}>
+              <div className="dashboard-pane-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+                <DetectionTable resultImages={result.result_images} />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── RIGHT COLUMN: Summary & Chat ── */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0, overflow: 'hidden' }}>
+
+          {result && (
+            <div style={{ flexShrink: 0 }}>
+              <ResultSummary result={result} />
+            </div>
+          )}
+
+          <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <ChatPanel jobId={result?.job_id} />
+          </div>
+        </div>
+
+      </div>
     </div>
   )
 }
