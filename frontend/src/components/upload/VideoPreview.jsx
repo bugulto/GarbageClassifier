@@ -1,53 +1,56 @@
-import { useRef } from 'react'
-import { Video } from 'lucide-react'
+import { useRef, useEffect } from 'react'
+import { Film } from 'lucide-react'
 
 export const VideoPreview = ({ videoUrl, onFrameCapture }) => {
   const videoRef = useRef(null)
-  const canvasRef = useRef(null)
 
-  const captureFirstFrame = () => {
-    if (!videoRef.current || !canvasRef.current) return
-
-    const video = videoRef.current
-    const canvas = canvasRef.current
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-
-    const context = canvas.getContext('2d')
-    context.drawImage(video, 0, 0, canvas.width, canvas.height)
-
-    const url = canvas.toDataURL('image/jpeg')
-    onFrameCapture(url, video.videoWidth, video.videoHeight)
-  }
-
-  const handleLoadedMetadata = () => {
+  useEffect(() => {
+    if (!onFrameCapture) return
     const video = videoRef.current
     if (!video) return
 
-    const targetTime = Number.isFinite(video.duration)
-      ? Math.min(0.1, video.duration)
-      : 0.1
-    video.currentTime = targetTime
-  }
+    const capture = () => {
+      if (video.videoWidth === 0 || video.videoHeight === 0) return
+      const canvas = document.createElement('canvas')
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+      const ctx = canvas.getContext('2d')
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+        onFrameCapture(
+          canvas.toDataURL('image/jpeg', 0.85),
+          video.videoWidth,
+          video.videoHeight
+        )
+      }
+    }
+
+    video.addEventListener('pause', capture)
+    video.addEventListener('seeked', capture)
+    return () => {
+      video.removeEventListener('pause', capture)
+      video.removeEventListener('seeked', capture)
+    }
+  }, [onFrameCapture])
 
   if (!videoUrl) return null
 
   return (
-    <div className="preview-container">
-      <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-        <Video size={18} className="text-muted" /> Video Preview
-      </h3>
-      <div style={{ display: 'flex', justifyContent: 'center', background: 'var(--surface-hover)', borderRadius: 'var(--r-sm)', padding: '16px', border: '1px dashed var(--border)' }}>
+    <div className="chat-panel" style={{ marginBottom: 0 }}>
+      <div className="chat-header">
+        <Film size={18} className="text-muted" />
+        Video Preview
+      </div>
+      <div style={{
+        flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '14px'
+      }}>
         <video
           ref={videoRef}
           src={videoUrl}
           controls
-          className="preview-video"
-          onLoadedMetadata={handleLoadedMetadata}
-          onSeeked={captureFirstFrame}
-          style={{ maxHeight: '400px' }}
+          style={{ maxHeight: '100%', maxWidth: '100%', display: 'block', borderRadius: '6px' }}
         />
-        <canvas ref={canvasRef} style={{ display: 'none' }} />
       </div>
     </div>
   )
