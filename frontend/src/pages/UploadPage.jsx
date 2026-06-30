@@ -90,7 +90,7 @@ export const UploadPage = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0, overflow: 'hidden' }}>
 
           {/* Visuals area */}
-          <div style={{ flex: result ? '1 1 55%' : '1 1 100%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: result ? '1 1 64%' : '1 1 100%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
             <div className="dashboard-pane-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
               {renderVisuals()}
             </div>
@@ -98,7 +98,7 @@ export const UploadPage = () => {
 
           {/* Table area */}
           {result && (
-            <div style={{ flex: '1 1 45%', minHeight: 0, display: 'flex', flexDirection: 'column', borderTop: '1px solid var(--border)', paddingTop: '8px' }}>
+            <div style={{ flex: '1 1 36%', minHeight: 0, display: 'flex', flexDirection: 'column', borderTop: '1px solid var(--border)', paddingTop: '8px' }}>
               <div className="dashboard-pane-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
                 <DetectionTable resultImages={result.result_images} />
               </div>

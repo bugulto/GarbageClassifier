@@ -1,7 +1,8 @@
 import { StatCard } from '../ui/StatCard'
+import { Badge } from '../ui/Badge'
 import { BoxSelect, Camera, Image as ImageIcon, Cpu, BarChart3 } from 'lucide-react'
 
-export const ResultSummary = ({ result }) => {
+export const ResultSummary = ({ result, isJobDetail }) => {
 
   return (
     <div className="chat-panel" style={{ marginBottom: 0 }}>
@@ -35,6 +36,29 @@ export const ResultSummary = ({ result }) => {
             valueClass="text-muted"
           />
         </div>
+
+        {isJobDetail && (
+          <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '11px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
+              <span className="text-muted">Filename</span>
+              <span style={{ fontWeight: 500, color: 'var(--text-primary)', maxWidth: '160px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {result.original_filename || '-'}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
+              <span className="text-muted">Date Created</span>
+              <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
+                {result.created_at ? new Date(result.created_at).toLocaleString() : '-'}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
+              <span className="text-muted">Status</span>
+              <Badge variant={result.status === 'completed' ? 'green' : result.status === 'failed' ? 'red' : 'warning'} style={{ textTransform: 'capitalize' }}>
+                {result.status || 'Unknown'}
+              </Badge>
+            </div>
+          </div>
+        )}
 
         {result.status === 'failed' && (
           <div style={{

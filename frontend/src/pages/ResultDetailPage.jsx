@@ -57,18 +57,20 @@ export const ResultDetailPage = () => {
 
   return (
     <div className="page-viewport-locked">
-      {/* Compact header bar */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', flexShrink: 0 }}>
-        <button onClick={() => navigate('/history')} className="btn-outline" style={{ padding: '5px 8px', border: 'none' }}>
-          <ArrowLeft size={16} />
-        </button>
-        <FileText size={16} className="text-muted" />
-        <h2 style={{ marginBottom: 0, fontSize: '15px' }}>
-          {result.original_filename}
-        </h2>
-        <Badge variant={getStatusVariant(result.status)}>
-          {result.message || result.status || 'Unknown'}
-        </Badge>
+      {/* Premium header bar */}
+      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button onClick={() => navigate('/history')} className="btn-outline" style={{ padding: '6px 12px', fontSize: '13px', border: 'none', background: 'var(--surface)' }}>
+            <ArrowLeft size={16} /> Back to History
+          </button>
+          <div style={{ height: '24px', width: '1px', backgroundColor: 'var(--border)' }}></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <FileText size={18} className="text-muted" />
+            <h1 style={{ marginBottom: 0, fontSize: '18px', fontWeight: 600, letterSpacing: '-0.01em', color: 'var(--primary-green)' }}>
+              {result.original_filename}
+            </h1>
+          </div>
+        </div>
       </div>
 
       {/* 3-column grid matching the upload page */}
@@ -77,7 +79,7 @@ export const ResultDetailPage = () => {
         {/* LEFT: Summary + Detected Classes */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0, overflow: 'hidden' }}>
           <div style={{ flexShrink: 0 }}>
-            <ResultSummary result={result} />
+            <ResultSummary result={result} isJobDetail={true} />
           </div>
           <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
             <ClassSummaryCards summary={result.summary} />
@@ -86,15 +88,11 @@ export const ResultDetailPage = () => {
 
         {/* MIDDLE: Images + Detection Table */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0, overflow: 'hidden' }}>
-          <div style={{ flex: '1 1 55%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-            <div className="dashboard-pane-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-              <ResultImageGallery resultImages={result.result_images} />
-            </div>
+          <div style={{ flex: '1 1 64%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+            <ResultImageGallery resultImages={result.result_images} />
           </div>
-          <div style={{ flex: '1 1 45%', minHeight: 0, display: 'flex', flexDirection: 'column', borderTop: '1px solid var(--border)', paddingTop: '8px' }}>
-            <div className="dashboard-pane-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-              <DetectionTable resultImages={result.result_images} />
-            </div>
+          <div style={{ flex: '1 1 36%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+            <DetectionTable resultImages={result.result_images} />
           </div>
         </div>
 
