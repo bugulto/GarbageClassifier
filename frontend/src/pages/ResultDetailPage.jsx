@@ -7,6 +7,7 @@ import { DetectionTable } from '../components/results/DetectionTable'
 import { ChatPanel } from '../components/chat/ChatPanel'
 import { getJobDetail } from '../services/resultsApi'
 import { Badge } from '../components/ui/Badge'
+import { getStatusVariant } from '../utils/status'
 import { ArrowLeft, FileText } from 'lucide-react'
 
 export const ResultDetailPage = () => {
@@ -21,8 +22,7 @@ export const ResultDetailPage = () => {
       try {
         const data = await getJobDetail(jobId)
         setResult(data)
-      } catch (err) {
-        console.error(err)
+      } catch {
         setError('Failed to load job details.')
       } finally {
         setLoading(false)
@@ -31,11 +31,7 @@ export const ResultDetailPage = () => {
     fetchDetail()
   }, [jobId])
 
-  const getStatusVariant = (status) => {
-    if (status === 'completed') return 'green'
-    if (status === 'failed') return 'red'
-    return 'warning'
-  }
+
 
   if (loading) {
     return (
@@ -57,27 +53,26 @@ export const ResultDetailPage = () => {
 
   return (
     <div className="page-viewport-locked">
-      {/* Premium header bar */}
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button onClick={() => navigate('/history')} className="btn-outline" style={{ padding: '6px 12px', fontSize: '13px', border: 'none', background: 'var(--surface)' }}>
+
+      <div className="page-header-row">
+        <div className="page-header-group">
+          <button onClick={() => navigate('/history')} className="btn-outline compact-button" style={{ border: 'none', background: 'var(--surface)' }}>
             <ArrowLeft size={16} /> Back to History
           </button>
-          <div style={{ height: '24px', width: '1px', backgroundColor: 'var(--border)' }}></div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="header-divider"></div>
+          <div className="detail-shell">
             <FileText size={18} className="text-muted" />
-            <h1 style={{ marginBottom: 0, fontSize: '18px', fontWeight: 600, letterSpacing: '-0.01em', color: 'var(--primary-green)' }}>
+            <h1 className="title-inline">
               {result.original_filename}
             </h1>
           </div>
         </div>
       </div>
 
-      {/* 3-column grid matching the upload page */}
+
       <div className="dashboard-grid">
 
-        {/* LEFT: Summary + Detected Classes */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0, overflow: 'hidden' }}>
+        <div className="page-stack">
           <div style={{ flexShrink: 0 }}>
             <ResultSummary result={result} isJobDetail={true} />
           </div>
@@ -86,8 +81,8 @@ export const ResultDetailPage = () => {
           </div>
         </div>
 
-        {/* MIDDLE: Images + Detection Table */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0, overflow: 'hidden' }}>
+
+        <div className="page-stack">
           <div style={{ flex: '1 1 64%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
             <ResultImageGallery resultImages={result.result_images} />
           </div>
@@ -96,8 +91,8 @@ export const ResultDetailPage = () => {
           </div>
         </div>
 
-        {/* RIGHT: Chat */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0, overflow: 'hidden' }}>
+
+        <div className="page-stack">
           <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
             <ChatPanel jobId={jobId} />
           </div>

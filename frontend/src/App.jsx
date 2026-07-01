@@ -10,7 +10,6 @@ import './styles.css'
 
 function App() {
   useEffect(() => {
-    // Wake up backend to avoid Render cold starts
     fetch(`${API_BASE_URL}/health/`).catch(() => {})
   }, [])
 

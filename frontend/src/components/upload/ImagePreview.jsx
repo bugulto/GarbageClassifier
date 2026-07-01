@@ -9,10 +9,7 @@ export const ImagePreview = ({ imageUrl }) => {
         <ImageIcon size={18} className="text-muted" />
         Image Preview
       </div>
-      <div style={{ 
-        flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', 
-        padding: '14px' 
-      }}>
+      <div className="panel-body" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <img src={imageUrl} alt="preview" className="preview-image" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
       </div>
     </div>

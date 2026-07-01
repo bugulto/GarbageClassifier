@@ -18,10 +18,10 @@ export const ChatInput = ({ onSend, disabled, placeholder }) => {
         type="text"
         value={text}
         onChange={(event) => setText(event.target.value)}
-        placeholder={placeholder || "Type your question..."}
+        placeholder={placeholder || 'Type your question...'}
         disabled={disabled}
       />
-      <button type="submit" disabled={disabled || !text.trim()} className="btn-primary" style={{ padding: '10px' }}>
+      <button type="submit" disabled={disabled || !text.trim()} className="btn-primary chat-input-submit">
         <SendHorizontal size={18} />
       </button>
     </form>

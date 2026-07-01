@@ -41,10 +41,7 @@ export const VideoPreview = ({ videoUrl, onFrameCapture }) => {
         <Film size={18} className="text-muted" />
         Video Preview
       </div>
-      <div style={{
-        flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '14px'
-      }}>
+      <div className="panel-body" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <video
           ref={videoRef}
           src={videoUrl}

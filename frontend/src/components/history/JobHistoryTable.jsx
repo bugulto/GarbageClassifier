@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom'
 import { EmptyState } from '../shared/EmptyState'
 import { Badge } from '../ui/Badge'
+import { getStatusVariant } from '../../utils/status'
 import { Eye, SearchX } from 'lucide-react'
 
 export const JobHistoryTable = ({ jobs }) => {
   if (!jobs || jobs.length === 0) {
     return (
-      <div style={{ padding: '40px 0' }}>
+      <div className="history-empty-wrap">
         <EmptyState 
           title="No History" 
           description="No job history found. Try adjusting your filters or uploading a file."
@@ -19,7 +20,7 @@ export const JobHistoryTable = ({ jobs }) => {
   const formatSummary = (summary) => {
     if (!summary || Object.keys(summary).length === 0) return '-'
     return Object.entries(summary).map(([cls, count]) => (
-      <span key={cls} className="class-chip" style={{ marginBottom: 0, padding: '2px 6px' }}>
+      <span key={cls} className="class-chip history-summary-chip">
         {cls} {count}
       </span>
     ))
@@ -33,14 +34,9 @@ export const JobHistoryTable = ({ jobs }) => {
     }
   }
 
-  const getStatusVariant = (status) => {
-    if (status === 'completed') return 'green'
-    if (status === 'failed') return 'red'
-    return 'warning'
-  }
 
   return (
-    <div className="table-scroll-wrapper" style={{ margin: 0, padding: 0 }}>
+    <div className="table-scroll-wrapper table-shell">
       <table className="data-table">
         <thead>
           <tr>
@@ -68,13 +64,13 @@ export const JobHistoryTable = ({ jobs }) => {
                 </Badge>
               </td>
               <td>
-                <div style={{ minWidth: '200px', flexWrap: 'wrap', gap: '4px', display: 'flex', alignItems: 'center' }}>
+                <div className="history-summary-chips">
                   {formatSummary(job.summary)}
                 </div>
               </td>
               <td>
                 <Link to={`/history/${job.job_id}`}>
-                  <button className="btn-secondary" style={{ padding: '6px 12px', fontSize: '12px' }}>
+                  <button className="btn-secondary compact-button-sm">
                     <Eye size={14} /> View
                   </button>
                 </Link>

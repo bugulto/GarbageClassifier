@@ -33,13 +33,9 @@ export const ChatPanel = forwardRef(({ jobId }, ref) => {
     handleSend
   }))
 
-  const title = jobId
-    ? 'Ask about this result'
-    : 'Garbage Classification Chatbot'
+  const title = jobId ? 'Ask about this result' : 'Garbage Classification Chatbot'
 
-  const placeholderText = jobId
-    ? "Ask about this classification result..."
-    : "Ask about all past jobs..."
+  const placeholderText = jobId ? 'Ask about this classification result...' : 'Ask about all past jobs...'
 
   const jobExamples = [
     "Summarize this result.",
@@ -62,14 +58,14 @@ export const ChatPanel = forwardRef(({ jobId }, ref) => {
   const examples = jobId ? jobExamples : globalExamples
 
   return (
-    <div className={`chat-panel ${!jobId ? 'chat-panel-centered' : 'chat-panel-centered'}`}>
+    <div className="chat-panel chat-panel-centered">
       <div className="chat-header">
         <MessageCircle size={18} className="text-muted" />
         {title}
       </div>
       <div className="chat-messages">
         {messages.length === 0 && (
-          <div className="empty-state" style={{ padding: '24px 16px', background: 'transparent', border: 'none' }}>
+          <div className="empty-state chat-empty-state">
             <p className="text-muted" style={{ marginBottom: '16px' }}>No messages yet. Ask a question or try an example!</p>
             <div className="chat-example-prompts">
               {examples.map((ex, i) => (
@@ -83,7 +79,7 @@ export const ChatPanel = forwardRef(({ jobId }, ref) => {
         {messages.map((msg, index) => (
           <ChatMessage key={index} role={msg.role} content={msg.content} />
         ))}
-        {loading && <p className="text-muted" style={{ fontSize: '13px', marginLeft: '12px' }}>Thinking...</p>}
+        {loading && <p className="text-muted chat-thinking">Thinking...</p>}
       </div>
       <div className="chat-input-container">
         <ChatInput onSend={handleSend} disabled={loading} placeholder={placeholderText} />

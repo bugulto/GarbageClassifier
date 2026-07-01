@@ -6,19 +6,19 @@ export const DetectionTable = ({ resultImages }) => {
 
   if (!resultImages || resultImages.length === 0) {
     return (
-      <div className="chat-panel" style={{ marginBottom: 0 }}>
+      <div className="chat-panel chat-panel-compact">
         <div className="chat-header">
           <Table size={18} className="text-muted" />
           Detection Table
         </div>
-        <div style={{ padding: '14px' }}>
-          <p className="text-muted" style={{ fontSize: '13px' }}>No detections available.</p>
+        <div className="panel-body-compact">
+          <p className="text-muted panel-empty-text">No detections available.</p>
         </div>
       </div>
     )
   }
 
-  // Flatten detections from all result images
+
   const rows = []
   resultImages.forEach((img, imgIndex) => {
     if (!img.detections || img.detections.length === 0) return
@@ -39,37 +39,36 @@ export const DetectionTable = ({ resultImages }) => {
 
   if (rows.length === 0) {
     return (
-      <div className="chat-panel" style={{ marginBottom: 0 }}>
+      <div className="chat-panel chat-panel-compact">
         <div className="chat-header">
           <Table size={18} className="text-muted" />
           Detection Table
         </div>
-        <div style={{ padding: '14px' }}>
-          <p className="text-muted" style={{ fontSize: '13px' }}>No detections available.</p>
+        <div className="panel-body-compact">
+          <p className="text-muted panel-empty-text">No detections available.</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="chat-panel" style={{ marginBottom: 0 }}>
-      <div className="chat-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div className="chat-panel chat-panel-compact">
+      <div className="chat-header panel-header-actions">
+        <div className="panel-header-inline">
           <Table size={18} className="text-muted" />
           Detection Table
         </div>
         <button 
           type="button" 
           onClick={() => setShowBbox(!showBbox)}
-          className="btn-outline"
-          style={{ fontSize: '11px', padding: '3px 8px', borderRadius: '12px', margin: 0, height: 'auto' }}
+          className="btn-outline result-table-toggle"
         >
           {showBbox ? <><ChevronUp size={12}/> Hide Details</> : <><ChevronDown size={12}/> Show Details</>}
         </button>
       </div>
       
-      <div className="dashboard-pane-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '14px' }}>
-        <div className="table-scroll-wrapper" style={{ margin: 0 }}>
+      <div className="dashboard-pane-scroll panel-table-shell">
+        <div className="table-scroll-wrapper panel-table-wrapper">
           <table className="data-table">
             <thead>
               <tr>
@@ -88,12 +87,12 @@ export const DetectionTable = ({ resultImages }) => {
                 <tr key={index}>
                   <td>{row.imageLabel}</td>
                   <td className="text-muted">{row.timestamp}</td>
-                  <td><span className="class-chip" style={{ marginBottom: 0 }}>{row.className}</span></td>
+                  <td><span className="class-chip result-table-badge">{row.className}</span></td>
                   <td>{(row.confidence * 100).toFixed(1)}%</td>
-                  {showBbox && <td className="text-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px' }}>{row.x1.toFixed(0)}</td>}
-                  {showBbox && <td className="text-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px' }}>{row.y1.toFixed(0)}</td>}
-                  {showBbox && <td className="text-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px' }}>{row.x2.toFixed(0)}</td>}
-                  {showBbox && <td className="text-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px' }}>{row.y2.toFixed(0)}</td>}
+                  {showBbox && <td className="text-muted result-table-bbox">{row.x1.toFixed(0)}</td>}
+                  {showBbox && <td className="text-muted result-table-bbox">{row.y1.toFixed(0)}</td>}
+                  {showBbox && <td className="text-muted result-table-bbox">{row.x2.toFixed(0)}</td>}
+                  {showBbox && <td className="text-muted result-table-bbox">{row.y2.toFixed(0)}</td>}
                 </tr>
               ))}
             </tbody>

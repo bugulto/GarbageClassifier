@@ -4,7 +4,7 @@ import { uploadImage, uploadVideo } from '../../services/uploadApi'
 const DEFAULT_CROP = { unit: '%', x: 10, y: 10, width: 80, height: 80 }
 const DEMO_VIDEO_CROP = { unit: '%', x: 0, y: 35, width: 65, height: 65 }
 
-export const useUploadState = ({ onUploadSuccess, onClearResult, setLoading, setError }) => {
+export const useUploadState = ({ onUploadSuccess, onClearResult, setError }) => {
   const [inputType, setInputType] = useState('image')
   const [file, setFile] = useState(null)
   const [preview, setPreview] = useState(null)
@@ -15,7 +15,12 @@ export const useUploadState = ({ onUploadSuccess, onClearResult, setLoading, set
   const [videoDimensions, setVideoDimensions] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
+  const clearPreviewUrl = () => {
+    if (preview) URL.revokeObjectURL(preview)
+  }
+
   const resetPreviewState = () => {
+    clearPreviewUrl()
     setPreview(null)
     setFrameUrl(null)
     setVideoDimensions(null)
@@ -36,6 +41,7 @@ export const useUploadState = ({ onUploadSuccess, onClearResult, setLoading, set
   const handleFileChange = (event) => {
     const selectedFile = event.target.files?.[0]
     if (!selectedFile) return
+    clearPreviewUrl()
     setFile(selectedFile)
     setPreview(URL.createObjectURL(selectedFile))
     setCrop(DEFAULT_CROP)
@@ -46,6 +52,7 @@ export const useUploadState = ({ onUploadSuccess, onClearResult, setLoading, set
   }
 
   const handleDemoSelected = ({ file: demoFile, inputType: demoInputType }) => {
+    clearPreviewUrl()
     setInputType(demoInputType)
     setFile(demoFile)
     setPreview(URL.createObjectURL(demoFile))
@@ -91,7 +98,6 @@ export const useUploadState = ({ onUploadSuccess, onClearResult, setLoading, set
     if (inputType === 'video' && !getVideoCropCoordinates()) return setError('Please select a valid crop region.')
 
     setSubmitting(true)
-    setLoading(true)
     setError('')
 
     try {
@@ -108,7 +114,6 @@ export const useUploadState = ({ onUploadSuccess, onClearResult, setLoading, set
       setError(`Upload failed: ${errorMsg}`)
     } finally {
       setSubmitting(false)
-      setLoading(false)
     }
   }
 

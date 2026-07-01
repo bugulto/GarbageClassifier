@@ -6,7 +6,7 @@ export const SectionHeader = ({ title, icon: Icon, subtitle, className = '' }) =
           {Icon && <Icon size={20} className="text-muted" />}
           {title}
         </h2>
-        {subtitle && <p className="text-muted" style={{ fontSize: '14px', marginTop: '4px' }}>{subtitle}</p>}
+        {subtitle && <p className="text-muted section-subtitle">{subtitle}</p>}
       </div>
     </div>
   )

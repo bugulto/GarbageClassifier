@@ -12,8 +12,6 @@ export const CropSelector = ({ videoUrl, imageSrc, crop, onCropChange, onFrameRe
     if (!videoUrl) return
 
     let active = true
-
-    // Create a hidden video element to extract first frame
     const video = document.createElement('video')
     video.src = videoUrl
     video.crossOrigin = 'anonymous'
@@ -45,7 +43,7 @@ export const CropSelector = ({ videoUrl, imageSrc, crop, onCropChange, onFrameRe
       active = false
       video.src = ''
     }
-  }, [videoUrl]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [videoUrl, onFrameReady])
 
   return (
     <div className="chat-panel" style={{ marginBottom: 0 }}>
@@ -53,13 +51,13 @@ export const CropSelector = ({ videoUrl, imageSrc, crop, onCropChange, onFrameRe
         <Crop size={18} className="text-muted" />
         Select Crop Region
       </div>
-      <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
+      <div className="preview-stage">
         {!displaySrc ? (
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="preview-placeholder">
             <p className="text-muted" style={{ fontSize: '13px' }}>Loading first frame…</p>
           </div>
         ) : (
-          <div style={{ position: 'absolute', inset: '14px', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>
+          <div className="preview-stage-inner">
             <ReactCrop
               crop={crop}
               onChange={(_, percentCrop) => onCropChange(percentCrop)}

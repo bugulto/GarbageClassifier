@@ -3,13 +3,13 @@ import { Image as ImageIcon } from 'lucide-react'
 export const ResultImageGallery = ({ resultImages }) => {
   if (!resultImages || resultImages.length === 0) {
     return (
-      <div className="chat-panel" style={{ marginBottom: 0 }}>
+      <div className="chat-panel chat-panel-compact">
         <div className="chat-header">
           <ImageIcon size={18} className="text-muted" />
           Annotated Images
         </div>
-        <div style={{ padding: '14px' }}>
-          <p className="text-muted" style={{ fontSize: '13px' }}>No result images available.</p>
+        <div className="panel-body-compact">
+          <p className="text-muted panel-empty-text">No result images available.</p>
         </div>
       </div>
     )
@@ -29,12 +29,12 @@ export const ResultImageGallery = ({ resultImages }) => {
   }
 
   return (
-    <div className="chat-panel" style={{ marginBottom: 0 }}>
+    <div className="chat-panel chat-panel-compact">
       <div className="chat-header">
         <ImageIcon size={18} className="text-muted" />
         Annotated Images
       </div>
-      <div className="dashboard-pane-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '14px' }}>
+      <div className="dashboard-pane-scroll panel-image-stage">
         <div className="image-grid" style={getGridStyle()}>
           {resultImages.map((img, index) => (
             <div key={index} className="result-image-card">
@@ -42,10 +42,11 @@ export const ResultImageGallery = ({ resultImages }) => {
                 <img
                   src={img.annotated_image_url}
                   alt={`Result ${index + 1}`}
+                  className="result-image-frame"
                   style={{ height: getImageHeight() }}
                 />
               ) : (
-                <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>No image</div>
+                <div className="result-image-placeholder">No image</div>
               )}
               <div className="result-image-info">
                 <span>

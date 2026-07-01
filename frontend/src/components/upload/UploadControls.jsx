@@ -10,30 +10,22 @@ export const UploadControls = ({ state }) => {
   } = state
 
   return (
-    <form onSubmit={handleSubmit} className="upload-form" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div className="dashboard-pane-scroll" style={{
-        flex: 1,
-        minHeight: 0,
-        overflowY: 'auto',
-        paddingRight: '4px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '18px'
-      }}>
+    <form onSubmit={handleSubmit} className="upload-form upload-form-shell">
+      <div className="dashboard-pane-scroll upload-controls-scroll">
         <DemoSampleSelector onDemoSelected={handleDemoSelected} disabled={submitting} />
 
         <div className="form-group">
           <label>Input Source</label>
-          <select value={inputType} onChange={handleInputTypeChange} disabled={submitting} style={{ padding: '8px 10px', fontSize: '13px' }}>
+          <select value={inputType} onChange={handleInputTypeChange} disabled={submitting} className="upload-input-select">
             <option value="image">Upload Image</option>
             <option value="video">Video Stream</option>
           </select>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div className="page-stack" style={{ gap: '6px' }}>
           <FileInput inputType={inputType} onFileChange={handleFileChange} disabled={submitting} />
           {file && (
-            <p style={{ fontSize: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--primary-green)', margin: 0 }}>
+            <p className="upload-preview-file">
               Selected file: <strong>{file.name}</strong>
             </p>
           )}
@@ -46,8 +38,8 @@ export const UploadControls = ({ state }) => {
         <ModelSelector selectedModel={modelType} onModelChange={(event) => setModelType(event.target.value)} disabled={submitting} />
       </div>
 
-      <div style={{ marginTop: 'auto', paddingTop: '16px', flexShrink: 0 }}>
-        <button type="submit" className="btn-primary" disabled={submitting || !file || !modelType} style={{ padding: '12px', fontSize: '14px', width: '100%', fontWeight: 600 }}>
+      <div className="upload-controls-actions">
+        <button type="submit" className="btn-primary upload-submit" disabled={submitting || !file || !modelType}>
           {submitting ? 'Processing...' : 'Analyse Garbage'}
         </button>
       </div>

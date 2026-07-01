@@ -11,7 +11,7 @@ export const ResultSummary = ({ result, isJobDetail }) => {
         Analysis Summary
       </div>
 
-      <div style={{ padding: '14px' }}>
+      <div className="panel-body">
         <div className="stat-grid">
           <StatCard
             label="Detections"
@@ -38,20 +38,20 @@ export const ResultSummary = ({ result, isJobDetail }) => {
         </div>
 
         {isJobDetail && (
-          <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
+          <div className="summary-meta">
+            <div className="summary-row">
               <span className="text-muted">Filename</span>
-              <span style={{ fontWeight: 500, color: 'var(--text-primary)', maxWidth: '160px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <span className="summary-value summary-value-truncated">
                 {result.original_filename || '-'}
               </span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
+            <div className="summary-row">
               <span className="text-muted">Date Created</span>
-              <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
+              <span className="summary-value">
                 {result.created_at ? new Date(result.created_at).toLocaleString() : '-'}
               </span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
+            <div className="summary-row">
               <span className="text-muted">Status</span>
               <Badge variant={result.status === 'completed' ? 'green' : result.status === 'failed' ? 'red' : 'warning'} style={{ textTransform: 'capitalize' }}>
                 {result.status || 'Unknown'}
@@ -61,20 +61,11 @@ export const ResultSummary = ({ result, isJobDetail }) => {
         )}
 
         {result.status === 'failed' && (
-          <div style={{
-            marginTop: '12px',
-            background: 'var(--error-bg)',
-            border: '1px solid var(--border)',
-            padding: '14px',
-            borderRadius: 'var(--r-md)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '4px'
-          }}>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--error)' }}>
+          <div className="summary-error">
+            <span className="summary-error-title">
               Status: Failed
             </span>
-            <p style={{ fontSize: '11.5px', color: 'var(--error)', opacity: 0.85, margin: 0, lineHeight: 1.4 }}>
+            <p className="summary-error-text">
               {result.message}
             </p>
           </div>

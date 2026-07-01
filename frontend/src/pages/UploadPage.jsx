@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { UploadControls } from '../components/upload/UploadControls'
 import { useUploadState } from '../components/upload/useUploadState'
 import { ImagePreview } from '../components/upload/ImagePreview'
-
 import { VideoPreview } from '../components/upload/VideoPreview'
 import { CropSelector } from '../components/upload/CropSelector'
 import { ResultSummary } from '../components/results/ResultSummary'
@@ -14,13 +13,10 @@ import { Eye, UploadCloud } from 'lucide-react'
 
 export const UploadPage = () => {
   const [result, setResult] = useState(null)
-  const [, setLoading] = useState(false)
   const [error, setError] = useState('')
-
   const uploadState = useUploadState({
     onUploadSuccess: setResult,
     onClearResult: () => setResult(null),
-    setLoading,
     setError
   })
 
@@ -33,7 +29,7 @@ export const UploadPage = () => {
     }
     if (uploadState.inputType === 'video' && uploadState.preview) {
       return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '10px' }}>
+        <div className="page-stack" style={{ height: '100%' }}>
           <div style={{ flex: 4, minHeight: 0 }}>
             <VideoPreview videoUrl={uploadState.preview} onFrameCapture={uploadState.handleFrameCapture} />
           </div>
@@ -51,11 +47,7 @@ export const UploadPage = () => {
       )
     }
     return (
-      <div style={{
-        height: '100%', minHeight: '120px', border: '2px dashed var(--border)', borderRadius: 'var(--r-lg)',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        background: 'var(--surface)', gap: '8px'
-      }}>
+      <div className="panel-centered-empty">
         <Eye size={28} style={{ color: 'var(--text-muted)', opacity: 0.5 }} />
         <p className="text-muted" style={{ fontSize: '12px' }}>Upload or select a sample to preview</p>
       </div>
@@ -66,14 +58,13 @@ export const UploadPage = () => {
     <div className="page-viewport-locked">
       <div className="dashboard-grid">
 
-        {/* ── LEFT COLUMN: Controls & Quick Stats ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0, overflow: 'hidden' }}>
+        <div className="page-stack">
           <div className="chat-panel" style={{ flex: 1, minHeight: 0 }}>
             <div className="chat-header">
               <UploadCloud size={18} className="text-muted" />
               Upload and Analyse
             </div>
-            <div style={{ padding: '14px', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+            <div className="panel-body">
               <UploadControls state={uploadState} />
               {error && <div className="alert-box alert-error" style={{ marginTop: '10px', marginBottom: 0 }}>{error}</div>}
             </div>
@@ -86,28 +77,25 @@ export const UploadPage = () => {
           )}
         </div>
 
-        {/* ── MIDDLE COLUMN: Visuals (top) & Table (bottom) ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0, overflow: 'hidden' }}>
 
-          {/* Visuals area */}
+        <div className="page-stack">
           <div style={{ flex: result ? '1 1 64%' : '1 1 100%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-            <div className="dashboard-pane-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+            <div className="dashboard-pane-scroll panel-scroll">
               {renderVisuals()}
             </div>
           </div>
 
-          {/* Table area */}
           {result && (
             <div style={{ flex: '1 1 36%', minHeight: 0, display: 'flex', flexDirection: 'column', borderTop: '1px solid var(--border)', paddingTop: '8px' }}>
-              <div className="dashboard-pane-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+              <div className="dashboard-pane-scroll panel-scroll">
                 <DetectionTable resultImages={result.result_images} />
               </div>
             </div>
           )}
         </div>
 
-        {/* ── RIGHT COLUMN: Summary & Chat ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0, overflow: 'hidden' }}>
+
+        <div className="page-stack">
 
           {result && (
             <div style={{ flexShrink: 0 }}>

@@ -13,8 +13,8 @@ export const HistoryFilters = ({ filters, onFilterChange, onReset }) => {
 
   return (
     <Card style={{ marginBottom: '24px' }}>
-      <div className="history-filters" style={{ display: 'flex', gap: '16px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
-        <div className="form-group" style={{ marginBottom: 0 }}>
+      <div className="history-filters filter-row">
+        <div className="form-group filter-group">
           <label>Input Type</label>
           <select
             name="input_type"
@@ -27,7 +27,7 @@ export const HistoryFilters = ({ filters, onFilterChange, onReset }) => {
           </select>
         </div>
 
-        <div className="form-group" style={{ marginBottom: 0 }}>
+        <div className="form-group filter-group">
           <label>Model</label>
           <select
             name="model_type"
@@ -41,7 +41,7 @@ export const HistoryFilters = ({ filters, onFilterChange, onReset }) => {
           </select>
         </div>
 
-        <div className="form-group" style={{ marginBottom: 0 }}>
+        <div className="form-group filter-group">
           <label>Status</label>
           <select
             name="status"
