@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Navbar } from './components/layout/Navbar'
 import { UploadPage } from './pages/UploadPage'
@@ -9,10 +8,6 @@ import { API_BASE_URL } from './services/apiConfig'
 import './styles.css'
 
 function App() {
-  useEffect(() => {
-    fetch(`${API_BASE_URL}/health/`).catch(() => {})
-  }, [])
-
   return (
     <BrowserRouter>
       <div className="app-shell">
