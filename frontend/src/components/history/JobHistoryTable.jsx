@@ -1,10 +1,29 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { EmptyState } from '../shared/EmptyState'
 import { Badge } from '../ui/Badge'
 import { getStatusVariant } from '../../utils/status'
 import { Eye, SearchX } from 'lucide-react'
 
 export const JobHistoryTable = ({ jobs }) => {
+  const navigate = useNavigate()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 900px)')
+
+    const updateIsMobile = () => {
+      setIsMobile(mediaQuery.matches)
+    }
+
+    updateIsMobile()
+    mediaQuery.addEventListener('change', updateIsMobile)
+
+    return () => {
+      mediaQuery.removeEventListener('change', updateIsMobile)
+    }
+  }, [])
+
   if (!jobs || jobs.length === 0) {
     return (
       <div className="history-empty-wrap">
@@ -34,6 +53,12 @@ export const JobHistoryTable = ({ jobs }) => {
     }
   }
 
+  const openJobDetail = (jobId) => {
+    if (isMobile) {
+      navigate(`/history/${jobId}`)
+    }
+  }
+
 
   return (
     <div className="table-scroll-wrapper table-shell">
@@ -51,7 +76,20 @@ export const JobHistoryTable = ({ jobs }) => {
         </thead>
         <tbody>
           {jobs.map((job) => (
-            <tr key={job.job_id}>
+            <tr
+              key={job.job_id}
+              className={isMobile ? 'history-row history-row-mobile' : 'history-row'}
+              onClick={() => openJobDetail(job.job_id)}
+              role={isMobile ? 'button' : undefined}
+              tabIndex={isMobile ? 0 : undefined}
+              onKeyDown={(event) => {
+                if (!isMobile) return
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  openJobDetail(job.job_id)
+                }
+              }}
+            >
               <td style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--text-secondary)' }}>
                 {formatDate(job.created_at)}
               </td>
@@ -68,9 +106,9 @@ export const JobHistoryTable = ({ jobs }) => {
                   {formatSummary(job.summary)}
                 </div>
               </td>
-              <td>
+              <td className="history-row-action">
                 <Link to={`/history/${job.job_id}`}>
-                  <button className="btn-secondary compact-button-sm">
+                  <button className="btn-secondary compact-button-sm" type="button">
                     <Eye size={14} /> View
                   </button>
                 </Link>
