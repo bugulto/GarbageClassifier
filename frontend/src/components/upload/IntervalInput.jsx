@@ -1,8 +1,20 @@
 import { useState } from 'react'
-import { Info } from 'lucide-react'
+import { Info, AlertCircle } from 'lucide-react'
 
 export const IntervalInput = ({ interval, onIntervalChange, disabled }) => {
   const [isHovered, setIsHovered] = useState(false)
+  const [rawValue, setRawValue] = useState(String(interval))
+
+  const isInvalid = rawValue === '' || Number(rawValue) < 1
+
+  const handleChange = (event) => {
+    const raw = event.target.value
+    setRawValue(raw)
+    const parsed = parseFloat(raw)
+    if (!isNaN(parsed)) {
+      onIntervalChange(parsed)
+    }
+  }
 
   return (
     <div
@@ -13,13 +25,32 @@ export const IntervalInput = ({ interval, onIntervalChange, disabled }) => {
       <label>Snapshot Interval:</label>
       <input
         type="number"
-        min="0.1"
+        min="1"
         step="0.1"
-        value={interval}
-        onChange={(event) => onIntervalChange(Number(event.target.value))}
+        value={rawValue}
+        onChange={handleChange}
         disabled={disabled}
+        style={isInvalid ? { borderColor: 'var(--error, #ef4444)' } : {}}
       />
-      {isHovered && (
+
+      {isInvalid && (
+        <div style={{
+          marginTop: '8px',
+          padding: '10px 12px',
+          backgroundColor: 'var(--error-bg, #fef2f2)',
+          borderRadius: 'var(--r-md)',
+          display: 'flex',
+          gap: '8px',
+          alignItems: 'flex-start'
+        }}>
+          <AlertCircle size={14} style={{ color: 'var(--error, #ef4444)', flexShrink: 0, marginTop: '2px' }} />
+          <p style={{ margin: 0, fontSize: '11.5px', color: 'var(--error, #ef4444)', lineHeight: 1.4 }}>
+            Interval must be at least 1 second.
+          </p>
+        </div>
+      )}
+
+      {isHovered && !isInvalid && (
         <div style={{
           marginTop: '8px',
           padding: '10px 12px',

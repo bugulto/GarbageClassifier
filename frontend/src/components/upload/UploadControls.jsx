@@ -39,7 +39,7 @@ export const UploadControls = ({ state }) => {
       </div>
 
       <div className="upload-controls-actions">
-        <button type="submit" className="btn-primary upload-submit" disabled={submitting || !file || !modelType}>
+        <button type="submit" className="btn-primary upload-submit" disabled={submitting || !file || !modelType || interval < 1}>
           {submitting ? 'Processing...' : 'Analyse Garbage'}
         </button>
       </div>
