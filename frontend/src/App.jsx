@@ -4,7 +4,6 @@ import { UploadPage } from './pages/UploadPage'
 import { HistoryPage } from './pages/HistoryPage'
 import { ResultDetailPage } from './pages/ResultDetailPage'
 import { ChatPage } from './pages/ChatPage'
-import { API_BASE_URL } from './services/apiConfig'
 import './styles.css'
 
 function App() {

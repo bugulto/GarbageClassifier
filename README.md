@@ -14,7 +14,7 @@
 | Frontend Application | [https://waste-vision-phi.vercel.app](https://waste-vision-phi.vercel.app) — hosted on Vercel |
 | Backend API | [https://garbageclassifier.onrender.com/api](https://garbageclassifier.onrender.com/api) — hosted on Render |
 
-> **Note:** The backend is hosted on Render's free tier and spins down after inactivity. The first request after a period of idle may take 30-60 seconds to respond while the service cold-starts. Subsequent requests are normal speed.
+> **Note:** The backend is hosted on Render's free tier. Uptime monitoring keeps the service warm, so cold starts should not occur during normal usage.
 
 ---
 
@@ -200,7 +200,6 @@ npm run dev
 ## Known Limitations
 
 - **Single Gunicorn worker:** The Render free tier provides 512MB RAM. Running multiple workers causes out-of-memory kills due to cumulative process overhead, so the backend runs with `--workers 1`. This is sufficient for a demo workload but would not support meaningful concurrent traffic.
-- **Cold starts:** Render's free tier spins down inactive services. The first request after ~15 minutes of inactivity may take 20–30 seconds while the service restarts.
 - **Shared classification history:** There is no user authentication. All visitors share the same job history and RAG knowledge base, which is appropriate for a demo context but would require an auth layer for a multi-tenant production deployment.
 - **Gemini free tier rate limits:** The chatbot uses Gemini 3.1 Flash-Lite on the free tier (500 requests/day). Heavy concurrent usage during a demo session could approach this ceiling.
 
@@ -208,8 +207,8 @@ npm run dev
 
 ## Future Improvements
 
-- Asynchronous inference pipeline using Celery and Redis, replacing the current synchronous request/response flow
-- Per-user authentication and job isolation
+- User authentication and per-user job isolation
+- Asynchronous inference using Celery + Redis (non-blocking uploads)
 - Real-time job status updates via WebSocket
-- Expanded RAG knowledge base with disposal regulations and recycling guidelines by material class
-- Analytics dashboard with detection trend charts across the full job history
+- Analytics dashboard with detection trend charts
+- Expanded RAG knowledge base with disposal guidelines per material class

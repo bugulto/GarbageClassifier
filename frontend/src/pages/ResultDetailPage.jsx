@@ -6,8 +6,6 @@ import { ResultImageGallery } from '../components/results/ResultImageGallery'
 import { DetectionTable } from '../components/results/DetectionTable'
 import { ChatPanel } from '../components/chat/ChatPanel'
 import { getJobDetail } from '../services/resultsApi'
-import { Badge } from '../components/ui/Badge'
-import { getStatusVariant } from '../utils/status'
 import { ArrowLeft, FileText } from 'lucide-react'
 
 export const ResultDetailPage = () => {

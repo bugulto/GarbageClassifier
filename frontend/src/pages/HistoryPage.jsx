@@ -21,26 +21,57 @@ export const HistoryPage = () => {
   const fetchJobs = useCallback(async (currentFilters) => {
     setLoading(true)
     setError('')
+
     try {
       const activeFilters = Object.fromEntries(
         Object.entries(currentFilters).filter(([, value]) => value !== '')
       )
+
       const data = await getJobs(activeFilters)
       setJobs(data)
     } catch (err) {
-      setError(
+      const message =
         err.response?.data?.detail ||
         err.response?.data?.error ||
         'Failed to load job history.'
-      )
+
+      setError(message)
     } finally {
       setLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    fetchJobs(DEFAULT_FILTERS)
-  }, [fetchJobs])
+    let isMounted = true
+    const initFetch = async () => {
+      try {
+        const activeFilters = Object.fromEntries(
+          Object.entries(DEFAULT_FILTERS).filter(([, value]) => value !== '')
+        )
+        const data = await getJobs(activeFilters)
+        if (isMounted) {
+          setJobs(data)
+        }
+      } catch (err) {
+        if (isMounted) {
+          const message =
+            err.response?.data?.detail ||
+            err.response?.data?.error ||
+            'Failed to load job history.'
+          setError(message)
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    initFetch()
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters)
@@ -54,8 +85,8 @@ export const HistoryPage = () => {
 
   return (
     <div className="page-container">
-      <SectionHeader
-        title="Job History"
+      <SectionHeader 
+        title="Job History" 
         subtitle="Review and filter past classification jobs."
         icon={History}
         className="page-header"
