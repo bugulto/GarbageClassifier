@@ -14,7 +14,7 @@
 | Frontend Application | [https://waste-vision-phi.vercel.app](https://waste-vision-phi.vercel.app) — hosted on Vercel |
 | Backend API | [https://garbageclassifier.onrender.com/api](https://garbageclassifier.onrender.com/api) — hosted on Render |
 
-> **Note:** The backend is hosted on Render's free tier. Uptime monitoring keeps the service warm, so cold starts should not occur during normal usage.
+> **Note:** The backend is hosted on Render's free tier. Uptime monitoring keeps the service warm, so cold starts should not occur during normal usage. However, inference requests may still take 30 seconds or more depending on file size and model complexity.
 
 ---
 
